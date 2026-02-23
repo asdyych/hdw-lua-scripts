@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Item Info Browser</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #1a1b26;
+      color: #a9b1d6;
+    }
+    h1 { color: #7aa2f7; margin-bottom: 8px; }
+    .subtitle { color: #565f89; margin-bottom: 20px; font-size: 14px; }
+    .panel {
+      background: #24283b;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .panel h2 { color: #7dcfff; font-size: 14px; margin: 0 0 12px 0; }
+    input[type="file"] { color: #a9b1d6; }
+    .search-box {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #414868;
+      border-radius: 6px;
+      background: #1a1b26;
+      color: #a9b1d6;
+      font-size: 14px;
+    }
+    .search-box:focus { outline: none; border-color: #7aa2f7; }
+    .item-list {
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .item-row {
+      padding: 8px 12px;
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .item-row:hover { background: #414868; }
+    .item-row.selected { background: #364a82; color: #7aa2f7; }
+    .item-id { color: #9ece6a; font-weight: 600; min-width: 48px; }
+    .attr-section { margin-bottom: 12px; }
+    .attr-section-title {
+      color: #7dcfff;
+      font-size: 12px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .attr-section-title:hover { color: #a9b1d6; }
+    .attr-section-title::before { content: '▾ '; }
+    .attr-section.collapsed .attr-section-title::before { content: '▸ '; }
+    .attr-section.collapsed .attr-section-chips { display: none; }
+    .attr-section-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .attr-chip {
+      padding: 4px 8px;
+      background: #1a1b26;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .attr-chip:hover { border-color: #414868; }
+    .attr-chip.checked { background: #364a82; border-color: #7aa2f7; }
+    .attr-search { margin-bottom: 10px; }
+    .detail-wrapper { max-height: 400px; overflow-y: auto; min-height: 120px; }
+    .attr-grid-detail {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 10px;
+    }
+    .attr-cell {
+      padding: 8px 10px;
+      background: #1a1b26;
+      border-radius: 6px;
+      border: 1px solid #414868;
+    }
+    .attr-cell .attr-name { color: #7aa2f7; font-size: 11px; margin-bottom: 2px; }
+    .attr-cell .attr-value { color: #c0caf5; font-size: 13px; }
+    .empty-state { color: #565f89; padding: 40px; text-align: center; }
+    .layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 768px) { .layout { grid-template-columns: 1fr; } }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .btn-primary { background: #7aa2f7; color: #1a1b26; }
+    .btn-primary:hover { background: #89b4fa; }
+    .btn-secondary { background: #414868; color: #a9b1d6; }
+    .actions { display: flex; gap: 8px; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Item Info Browser</h1>
+  <p class="subtitle">Load ItemInfo.txt, select item and attributes to display</p>
+
+  <div class="panel">
+    <h2>Load data</h2>
+    <div class="actions">
+      <input type="file" id="fileInput" accept=".txt" />
+      <button class="btn btn-secondary" id="loadFromServer">Load from server (ItemInfo.txt)</button>
+    </div>
+    <p class="subtitle" style="margin:8px 0 0 0">Tip: Run serve_item_browser.py then use Load from server for GBK files</p>
+  </div>
+
+  <div class="layout">
+    <div class="panel" style="height: fit-content;">
+      <h2>Search & Select Item</h2>
+      <input type="text" class="search-box" id="searchInput" placeholder="Search by ID or name..." />
+      <div class="item-list" id="itemList"></div>
+    </div>
+
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h2 style="margin:0">Item Details</h2>
+        <div class="actions" style="margin:0">
+          <button class="btn btn-primary" id="selectCore">Core</button>
+          <button class="btn btn-secondary" id="selectNone">None</button>
+        </div>
+      </div>
+      <div id="detailArea" class="detail-wrapper">
+        <div class="empty-state">Load ItemInfo.txt and select an item</div>
+      </div>
+
+      <h2 style="margin-top: 20px;">Select Attributes</h2>
+      <input type="text" class="search-box attr-search" id="attrSearch" placeholder="Filter attributes..." />
+      <div id="attrSections"></div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const CORE_ATTRS = [
+        '编号', 'Name', 'ICON', '类型', '价格', '角色等级', '职业',
+        '最小攻击力常数加成', '最大攻击力常数加成', '防御常数加成',
+        'Mxhp常数加成', 'Mxsp常数加成', 'Mxhp系数加成', 'Mxsp系数加成',
+        'Str常数加成', 'Agi常数加成', 'Dex常数加成', 'Con常数加成', 'Sta常数加成', 'Luk常数加成',
+        'Str系数加成', 'Agi系数加成', 'Dex系数加成', 'Con系数加成', 'Sta系数加成', 'Luk系数加成',
+        '攻击频率常数加成', '攻击频率系数加成', '攻击距离常数加成', '攻击距离系数加成',
+        'hit常数加成', 'flee常数加成', 'crt常数加成', 'mf常数加成',
+        'hit系数加成', 'flee系数加成', 'crt系数加成', 'mf系数加成',
+        'hrec常数加成', 'srec常数加成', 'mspd常数加成', 'col常数加成',
+        'hrec系数加成', 'srec系数加成', 'mspd系数加成', 'col系数加成',
+        '物理抵抗', '耐久', '最大实例化洞数',
+        '描述（道具等级）', '备注'
+      ];
+
+      const ATTR_GROUPS = {
+        'Basic': ['编号', 'Name', 'ICON', '类型', '价格', '体形', '角色等级', '职业', '角色称号', '角色名声', '描述（道具等级）', '备注'],
+        'Combat': ['最小攻击力常数加成', '最大攻击力常数加成', '防御常数加成', 'Mxhp常数加成', 'Mxsp常数加成', 'flee常数加成', 'hit常数加成', 'crt常数加成', 'mf常数加成', '攻击频率常数加成', '攻击距离常数加成'],
+        'Stat Coef': ['Str系数加成', 'Agi系数加成', 'Dex系数加成', 'Con系数加成', 'Sta系数加成', 'Luk系数加成'],
+        'Stat Add': ['Str常数加成', 'Agi常数加成', 'Dex常数加成', 'Con常数加成', 'Sta常数加成', 'Luk常数加成'],
+        'Equipment': ['道具可装备位置', '道具装备所替换位置', '道具拾取进入位置判断', '耐久', '最大实例化洞数', '物理抵抗', '道具左手发挥标识', '道具能量'],
+        'Effect': ['使用效果', '挥舞特效', '道具捆绑特效', '道具掉落模型特效', '道具使用特效'],
+        'Flags': ['交易', '拾取', '丢弃', '可否删除', '是否叠加', '是否实例化', '获得前缀几率', '套装编号', '精炼等级', '安定值', '唯一ID'],
+        'Other': []
+      };
+
+      let headers = [];
+      let items = [];
+      let attrChecked = {};
+
+      const fileInput = document.getElementById('fileInput');
+      const searchInput = document.getElementById('searchInput');
+      const itemList = document.getElementById('itemList');
+      const attrSearch = document.getElementById('attrSearch');
+      const attrSections = document.getElementById('attrSections');
+      const detailArea = document.getElementById('detailArea');
+
+      function parseTsv(text) {
+        const lines = text.split(/\r?\n/).filter(l => l.trim());
+        if (lines.length < 2) return { headers: [], rows: [] };
+        const rawHeader = lines[0].replace(/^\/\//, '').split('\t');
+        const headers = rawHeader.map(h => h.trim());
+        const rows = [];
+        for (let i = 1; i < lines.length; i++) {
+          const line = lines[i];
+          const content = line.startsWith('//') ? line.slice(2) : line;
+          if (line.startsWith('//') && !/^\d/.test(content.trim())) continue;
+          const cells = line.split('\t');
+          const row = {};
+          headers.forEach((h, j) => {
+            let val = (cells[j] || '').trim();
+            if (h === '编号' && val.startsWith('//')) val = val.slice(2);
+            row[h] = val;
+          });
+          if (row['编号'] || row['Name']) rows.push(row);
+        }
+        return { headers, rows };
+      }
+
+      function renderItemList(filter) {
+        const term = (filter || '').toLowerCase().trim();
+        const filtered = term
+          ? items.filter(i =>
+              (i['编号'] || '').toLowerCase().includes(term) ||
+              (i['Name'] || '').toLowerCase().includes(term))
+          : items.slice(0, 800);
+        itemList.innerHTML = filtered.length
+          ? filtered.map((item, idx) => {
+              const id = item['编号'] || '-';
+              const name = item['Name'] || '-';
+              return `<div class="item-row" data-idx="${idx}" data-id="${id}">
+                <span class="item-id">${id}</span>
+                <span>${name}</span>
+              </div>`;
+            }).join('')
+          : '<div class="empty-state">No items match</div>';
+
+        itemList.querySelectorAll('.item-row').forEach(el => {
+          el.addEventListener('click', () => selectItem(el.dataset.id, el.dataset.idx));
+        });
+      }
+
+      function selectItem(id, idx) {
+        itemList.querySelectorAll('.item-row').forEach(e => e.classList.remove('selected'));
+        const row = itemList.querySelector(`[data-id="${id}"]`);
+        if (row) row.classList.add('selected');
+        renderDetail(items.find(i => (i['编号'] || '').toString() === id));
+      }
+
+      function getGroupedHeaders() {
+        const used = new Set();
+        const groups = {};
+        for (const [name, attrs] of Object.entries(ATTR_GROUPS)) {
+          const list = name === 'Other'
+            ? headers.filter(h => !used.has(h))
+            : (attrs.length ? attrs.filter(a => headers.includes(a)) : []);
+          list.forEach(h => used.add(h));
+          if (list.length) groups[name] = list;
+        }
+        if (!groups['Other']) {
+          const rest = headers.filter(h => !used.has(h));
+          if (rest.length) groups['Other'] = rest;
+        }
+        return groups;
+      }
+
+      function renderAttrSections() {
+        if (!headers.length) return;
+        const term = (attrSearch.value || '').toLowerCase().trim();
+        const groups = getGroupedHeaders();
+        attrSections.innerHTML = Object.entries(groups).map(([groupName, attrs]) => {
+          const filtered = term ? attrs.filter(a => a.toLowerCase().includes(term)) : attrs;
+          if (filtered.length === 0) return '';
+          return `
+            <div class="attr-section ${groupName !== 'Basic' && groupName !== 'Combat' ? 'collapsed' : ''}" data-group="${groupName}">
+              <div class="attr-section-title">${groupName} (${filtered.length})</div>
+              <div class="attr-section-chips">
+                ${filtered.map(h => {
+                  const checked = attrChecked[h];
+                  return `<label class="attr-chip ${checked ? 'checked' : ''}" data-attr="${h}">
+                    <input type="checkbox" ${checked ? 'checked' : ''} style="margin-right:4px" />
+                    ${h}
+                  </label>`;
+                }).join('')}
+              </div>
+            </div>`;
+        }).join('');
+
+        attrSections.querySelectorAll('.attr-section-title').forEach(el => {
+          el.addEventListener('click', () => el.parentElement.classList.toggle('collapsed'));
+        });
+        attrSections.querySelectorAll('.attr-chip').forEach(el => {
+          const cb = el.querySelector('input');
+          el.addEventListener('click', (e) => {
+            if (e.target === cb) return;
+            cb.checked = !cb.checked;
+            attrChecked[el.dataset.attr] = cb.checked;
+            el.classList.toggle('checked', cb.checked);
+            const cur = itemList.querySelector('.item-row.selected');
+            if (cur) renderDetail(items.find(i => (i['编号'] || '').toString() === cur.dataset.id));
+          });
+        });
+      }
+
+      function hasValue(val) {
+        if (val == null || val === '') return false;
+        const s = String(val).trim();
+        if (s === '-' || s === '') return false;
+        const parts = s.split(',').map(p => p.trim());
+        const allZero = parts.every(p => p === '0' || p === '0.0' || parseFloat(p) === 0);
+        return !allZero;
+      }
+
+      function renderDetail(item) {
+        if (!item) {
+          detailArea.innerHTML = '<div class="empty-state">Select an item</div>';
+          return;
+        }
+        const selected = [
+          ...CORE_ATTRS.filter(k => attrChecked[k]),
+          ...headers.filter(k => attrChecked[k] && !CORE_ATTRS.includes(k))
+        ].filter(k => hasValue(item[k]));
+        if (selected.length === 0) {
+          detailArea.innerHTML = '<div class="empty-state">All selected attributes are zero or empty</div>';
+          return;
+        }
+        detailArea.innerHTML = `
+          <div class="attr-grid-detail">
+            ${selected.map(k => {
+              const v = (item[k] ?? '-').toString().replace(/</g, '&lt;');
+              return `<div class="attr-cell"><div class="attr-name">${k}</div><div class="attr-value">${v}</div></div>`;
+            }).join('')}
+          </div>`;
+      }
+
+      document.getElementById('selectCore').addEventListener('click', () => {
+        headers.forEach(h => { attrChecked[h] = CORE_ATTRS.includes(h); });
+        renderAttrSections();
+        const cur = itemList.querySelector('.item-row.selected');
+        if (cur) renderDetail(items.find(i => (i['编号'] || '').toString() === cur.dataset.id));
+      });
+
+      document.getElementById('selectNone').addEventListener('click', () => {
+        headers.forEach(h => { attrChecked[h] = false; });
+        renderAttrSections();
+        const cur = itemList.querySelector('.item-row.selected');
+        if (cur) renderDetail(items.find(i => (i['编号'] || '').toString() === cur.dataset.id));
+      });
+
+      attrSearch.addEventListener('input', () => renderAttrSections());
+
+      searchInput.addEventListener('input', () => renderItemList(searchInput.value));
+
+      function loadFromServer() {
+        return fetch('ItemInfo.txt').then(r => r.text()).then(text => {
+          const { headers: h, rows } = parseTsv(text);
+          headers = h.filter(x => x);
+          items = rows;
+          headers.forEach(a => {
+            if (attrChecked[a] === undefined) attrChecked[a] = CORE_ATTRS.includes(a);
+          });
+          renderAttrSections();
+          renderItemList(searchInput.value);
+          console.log('Loaded', items.length, 'items');
+        });
+      }
+
+      document.getElementById('loadFromServer').addEventListener('click', () => {
+        loadFromServer().catch(() => alert('Failed to load. Run serve_item_browser.py first.'));
+      });
+
+      loadFromServer().catch(() => {});
+
+      fileInput.addEventListener('change', (e) => {
+        const f = e.target.files[0];
+        if (!f) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const decoded = ev.target.result;
+          const { headers: h, rows } = parseTsv(decoded);
+          headers = h.filter(x => x);
+          items = rows;
+          headers.forEach(a => {
+            if (attrChecked[a] === undefined) attrChecked[a] = CORE_ATTRS.includes(a);
+          });
+          renderAttrSections();
+          renderItemList(searchInput.value);
+          console.log('Loaded', items.length, 'items');
+        };
+        reader.readAsText(f);
+      });
+    })();
+  </script>
+</body>
+</html>

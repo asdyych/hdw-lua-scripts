@@ -1,400 +1,1267 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Item Info Browser</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      background: #1a1b26;
-      color: #a9b1d6;
-    }
-    h1 { color: #7aa2f7; margin-bottom: 8px; }
-    .subtitle { color: #565f89; margin-bottom: 20px; font-size: 14px; }
-    .panel {
-      background: #24283b;
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-    .panel h2 { color: #7dcfff; font-size: 14px; margin: 0 0 12px 0; }
-    input[type="file"] { color: #a9b1d6; }
-    .search-box {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1px solid #414868;
-      border-radius: 6px;
-      background: #1a1b26;
-      color: #a9b1d6;
-      font-size: 14px;
-    }
-    .search-box:focus { outline: none; border-color: #7aa2f7; }
-    .item-list {
-      max-height: 280px;
-      overflow-y: auto;
-    }
-    .item-row {
-      padding: 8px 12px;
-      cursor: pointer;
-      border-radius: 4px;
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-    .item-row:hover { background: #414868; }
-    .item-row.selected { background: #364a82; color: #7aa2f7; }
-    .item-id { color: #9ece6a; font-weight: 600; min-width: 48px; }
-    .attr-section { margin-bottom: 12px; }
-    .attr-section-title {
-      color: #7dcfff;
-      font-size: 12px;
-      margin-bottom: 6px;
-      cursor: pointer;
-      user-select: none;
-    }
-    .attr-section-title:hover { color: #a9b1d6; }
-    .attr-section-title::before { content: '▾ '; }
-    .attr-section.collapsed .attr-section-title::before { content: '▸ '; }
-    .attr-section.collapsed .attr-section-chips { display: none; }
-    .attr-section-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .attr-chip {
-      padding: 4px 8px;
-      background: #1a1b26;
-      border-radius: 4px;
-      font-size: 11px;
-      cursor: pointer;
-      border: 1px solid transparent;
-      white-space: nowrap;
-    }
-    .attr-chip:hover { border-color: #414868; }
-    .attr-chip.checked { background: #364a82; border-color: #7aa2f7; }
-    .attr-search { margin-bottom: 10px; }
-    .detail-wrapper { max-height: 400px; overflow-y: auto; min-height: 120px; }
-    .attr-grid-detail {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 10px;
-    }
-    .attr-cell {
-      padding: 8px 10px;
-      background: #1a1b26;
-      border-radius: 6px;
-      border: 1px solid #414868;
-    }
-    .attr-cell .attr-name { color: #7aa2f7; font-size: 11px; margin-bottom: 2px; }
-    .attr-cell .attr-value { color: #c0caf5; font-size: 13px; }
-    .empty-state { color: #565f89; padding: 40px; text-align: center; }
-    .layout {
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      gap: 20px;
-    }
-    @media (max-width: 768px) { .layout { grid-template-columns: 1fr; } }
-    .btn {
-      padding: 8px 16px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      font-size: 13px;
-    }
-    .btn-primary { background: #7aa2f7; color: #1a1b26; }
-    .btn-primary:hover { background: #89b4fa; }
-    .btn-secondary { background: #414868; color: #a9b1d6; }
-    .actions { display: flex; gap: 8px; margin-bottom: 12px; }
-  </style>
+<meta charset="UTF-8">
+<title>物品信息编辑器</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Microsoft YaHei',sans-serif;background:#1a1a2e;color:#e0e0e0;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+/* ── Header ─────────────────────────────────────── */
+.app-header{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:8px 14px;background:#16213e;border-bottom:1px solid #0f3460;
+  flex-shrink:0;
+}
+.app-title{font-size:17px;font-weight:bold;color:#e94560;white-space:nowrap}
+.tab-bar{display:flex;align-items:center;gap:2px;flex-shrink:0}
+.tab-btn{
+  padding:5px 12px;border:none;background:transparent;color:#7f8c8d;
+  font-size:13px;cursor:pointer;border-radius:4px;transition:color .15s,background .15s;
+}
+.tab-btn:hover{color:#e0e0e0;background:#0f346055}
+.tab-btn.active{color:#e94560;font-weight:bold;border-bottom:2px solid #e94560;border-radius:0}
+.file-bar{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+.file-path{
+  font-size:12px;color:#7f8c8d;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;max-width:280px;flex-shrink:1;
+}
+.save-bar{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.unsaved-dot{font-size:12px;color:#e67e22;white-space:nowrap}
+
+/* ── Buttons ─────────────────────────────────────── */
+.btn{
+  padding:4px 10px;border:none;border-radius:4px;cursor:pointer;
+  font-size:13px;transition:opacity .15s;white-space:nowrap;
+}
+.btn:disabled{opacity:.4;cursor:default}
+.btn:hover:not(:disabled){opacity:.85}
+.btn-primary{background:#0f3460;color:#fff}
+.btn-accent{background:#e94560;color:#fff}
+.btn-success{background:#27ae60;color:#fff}
+.btn-warn{background:#e67e22;color:#fff}
+.btn-ghost{background:#2d3748;color:#e0e0e0}
+.btn-sm{padding:3px 8px;font-size:12px}
+
+input[type=file]{font-size:12px;color:#e0e0e0;background:#2d3748;
+  border:1px solid #444;border-radius:4px;padding:3px 6px}
+input[type=file]::file-selector-button{
+  background:#0f3460;color:#fff;border:none;border-radius:3px;
+  padding:2px 8px;cursor:pointer;font-size:12px;margin-right:6px;
+}
+
+/* ── Main layout ─────────────────────────────────── */
+.main-layout{
+  display:grid;grid-template-columns:300px 1fr;
+  gap:10px;padding:10px;flex:1;overflow:hidden;
+}
+.panel{
+  background:#16213e;border:1px solid #0f3460;border-radius:6px;
+  display:flex;flex-direction:column;overflow:hidden;padding:10px;gap:8px;
+}
+.panel-header{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.panel-title{font-size:14px;font-weight:bold;color:#e94560;flex:1}
+.panel-title-sm{font-size:13px;font-weight:bold;color:#e94560;flex-shrink:0;margin-top:4px}
+
+/* ── Search ──────────────────────────────────────── */
+.search-box{
+  width:100%;padding:6px 10px;background:#0d1b2a;border:1px solid #0f3460;
+  border-radius:4px;color:#e0e0e0;font-size:13px;flex-shrink:0;
+}
+.search-box:focus{outline:none;border-color:#e94560}
+.search-box::placeholder{color:#555}
+
+/* ── Item list ───────────────────────────────────── */
+.item-list{overflow-y:auto;flex:1}
+.pagination{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:5px 2px;flex-shrink:0;gap:6px;
+  border-top:1px solid #0f3460;min-height:34px;
+}
+.page-info{font-size:11px;color:#7f8c8d;white-space:nowrap}
+.page-btns{display:flex;align-items:center;gap:3px}
+.page-cur{font-size:12px;color:#a0c4ff;padding:0 6px;white-space:nowrap}
+.item-row{
+  display:flex;align-items:center;gap:6px;
+  padding:5px 8px;border-radius:4px;cursor:pointer;font-size:13px;
+  transition:background .1s;
+}
+.item-row:hover{background:#0f3460}
+.item-row.selected{background:#e9456033;border-left:3px solid #e94560;padding-left:5px}
+.item-no{color:#7f8c8d;font-size:11px;min-width:36px}
+.item-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.badge-dirty{
+  font-size:10px;background:#e67e22;color:#fff;border-radius:3px;
+  padding:1px 4px;flex-shrink:0;
+}
+.badge-new{
+  font-size:10px;background:#27ae60;color:#fff;border-radius:3px;
+  padding:1px 4px;flex-shrink:0;
+}
+
+/* ── Right panel ─────────────────────────────────── */
+.right-scroll{overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:10px}
+
+/* ── Detail grid ─────────────────────────────────── */
+.detail-header{margin-bottom:4px}
+.item-full-name{font-size:15px;font-weight:bold;color:#e0e0e0;margin-bottom:4px}
+.item-meta{font-size:12px;color:#7f8c8d}
+.attr-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:5px;
+}
+.attr-cell{
+  background:#0d1b2a;border:1px solid #0f3460;border-radius:4px;
+  padding:4px 8px;display:flex;flex-direction:column;
+}
+.attr-name{font-size:10px;color:#7f8c8d;line-height:1.3}
+.attr-val{font-size:13px;color:#e0e0e0;font-weight:500;word-break:break-all}
+.attr-val.positive{color:#27ae60}
+.attr-val.negative{color:#e74c3c}
+.empty-state{color:#555;font-size:13px;padding:20px;text-align:center}
+
+/* ── Attribute selector ──────────────────────────── */
+.attr-section{border:1px solid #0f3460;border-radius:4px;overflow:hidden;flex-shrink:0}
+.attr-section-title{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:5px 10px;background:#0d1b2a;cursor:pointer;font-size:13px;
+  font-weight:bold;color:#a0c4ff;user-select:none;
+}
+.attr-section-chips{display:flex;flex-wrap:wrap;gap:4px;padding:6px 8px}
+.attr-chip{
+  padding:3px 8px;border:1px solid #0f3460;border-radius:12px;
+  font-size:11px;cursor:pointer;transition:background .1s;
+  white-space:nowrap;
+}
+.attr-chip:hover{background:#0f3460}
+.attr-chip.checked{background:#e94560;border-color:#e94560;color:#fff}
+
+/* ── Modal ───────────────────────────────────────── */
+.modal-overlay{
+  position:fixed;inset:0;background:#000a;z-index:100;
+  /* align-items:flex-start avoids vertical-centering cutting off tall modals */
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:30px 16px;
+  box-sizing:border-box;
+  overflow:hidden; /* scroll should live inside modal-body, not on overlay */
+}
+.modal{
+  background:#16213e;border:1px solid #0f3460;border-radius:8px;
+  width:min(900px,100%);
+  /* Explicit height so the scroll row has a real constraint */
+  height:calc(100vh - 60px);
+  display:grid;
+  grid-template-rows:auto minmax(0, 1fr) auto; /* header / scroll body / footer */
+  box-shadow:0 20px 60px #000c;
+  overflow:hidden;
+}
+.modal-header{
+  display:flex;align-items:center;padding:14px 18px;
+  border-bottom:1px solid #0f3460;
+  gap:10px;
+}
+.modal-header h2{flex:1;font-size:16px;color:#e94560}
+.modal-close{
+  background:none;border:none;color:#7f8c8d;font-size:22px;
+  cursor:pointer;line-height:1;padding:0 4px;
+}
+.modal-close:hover{color:#e0e0e0}
+.modal-body{
+  min-height:0;           /* required for grid/flex scroll containers */
+  overflow:hidden;        /* scroll lives in sidebar/main, not outer body */
+  padding:12px 18px;
+  display:flex;flex-direction:column;gap:8px;
+  overscroll-behavior:contain;
+}
+.modal-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 18px;border-top:1px solid #0f3460;
+}
+.modal-tip{font-size:11px;color:#7f8c8d}
+.modal-actions{display:flex;gap:8px}
+
+/* Edit field groups */
+.edit-shell{display:flex;flex-direction:column;gap:10px;min-height:0;flex:1}
+.edit-topbar{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:8px 10px;background:#0d1b2a;border:1px solid #0f3460;border-radius:6px;
+}
+.segmented{display:flex;border:1px solid #0f3460;border-radius:8px;overflow:hidden}
+.seg-btn{
+  padding:5px 10px;border:0;background:#16213e;color:#e0e0e0;cursor:pointer;
+  font-size:12px;
+}
+.seg-btn.active{background:#e94560;color:#fff}
+.edit-search{
+  flex:1;min-width:220px;
+  padding:6px 10px;background:#0d1b2a;border:1px solid #0f3460;border-radius:6px;
+  color:#e0e0e0;font-size:13px;
+}
+.edit-search:focus{outline:none;border-color:#e94560}
+.edit-hint{font-size:11px;color:#7f8c8d;white-space:nowrap}
+
+.edit-content{
+  display:grid;grid-template-columns:220px minmax(0,1fr);
+  gap:10px;min-height:0;flex:1;
+}
+.edit-sidebar{
+  border:1px solid #0f3460;border-radius:6px;background:#0d1b2a;
+  overflow:auto;min-height:0;
+}
+.edit-group-item{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:8px 10px;cursor:pointer;font-size:12px;color:#e0e0e0;
+  border-bottom:1px solid #0f346055;
+}
+.edit-group-item:last-child{border-bottom:none}
+.edit-group-item:hover{background:#0f3460}
+.edit-group-item.active{background:#e9456033;border-left:3px solid #e94560;padding-left:7px}
+.edit-group-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.edit-group-count{font-size:11px;color:#7f8c8d;flex-shrink:0}
+
+.edit-main{
+  border:1px solid #0f3460;border-radius:6px;background:#0d1b2a;
+  overflow:auto;min-height:0;padding:10px;
+}
+.edit-fields{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:10px;align-items:start;
+}
+.field-box{display:flex;flex-direction:column;gap:3px;min-width:0}
+.field-label{
+  font-size:11px;color:#7f8c8d;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  line-height:1.4;
+}
+.field-key{font-size:10px;color:#4b5563;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.field-input{
+  padding:5px 7px;background:#0d1b2a;border:1px solid #333;
+  border-radius:3px;color:#e0e0e0;font-size:12px;width:100%;
+  min-width:0;
+}
+.field-input:focus{outline:none;border-color:#e94560}
+.field-textarea{
+  padding:5px 7px;background:#0d1b2a;border:1px solid #333;
+  border-radius:3px;color:#e0e0e0;font-size:12px;
+  resize:vertical;min-height:70px;width:100%;
+  grid-column:1/-1;
+}
+.field-textarea:focus{outline:none;border-color:#e94560}
+</style>
 </head>
 <body>
-  <h1>Item Info Browser</h1>
-  <p class="subtitle">Load ItemInfo.txt, select item and attributes to display</p>
 
-  <div class="panel" id="loadPanel">
-    <h2>Load data</h2>
-    <div class="actions" id="loadActions">
-      <button class="btn btn-primary" id="tauriSelectFile" style="display:none">Select File...</button>
-      <input type="file" id="fileInput" accept=".txt" />
-      <button class="btn btn-secondary" id="loadFromServer">Load from server (ItemInfo.txt)</button>
-    </div>
-    <p class="subtitle" id="loadTip" style="margin:8px 0 0 0">Tip: Run serve_item_browser.py then use Load from server for GBK files</p>
+<!-- ── App Header ───────────────────────── -->
+<div class="app-header">
+  <div class="app-title">数据编辑器</div>
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tabItem" type="button">物品</button>
+    <button class="tab-btn" id="tabChar" type="button">怪物</button>
   </div>
 
-  <div class="layout">
-    <div class="panel" style="height: fit-content;">
-      <h2>Search & Select Item</h2>
-      <input type="text" class="search-box" id="searchInput" placeholder="Search by ID or name..." />
-      <div class="item-list" id="itemList"></div>
+  <div class="file-bar" id="loadPanel">
+    <span class="file-path" id="currentFilePath">未加载文件</span>
+    <button class="btn btn-primary" id="tauriSelectFile" style="display:none">📂 选择文件</button>
+    <input type="file" id="fileInput" accept=".txt" />
+    <button class="btn btn-ghost btn-sm" id="loadFromServer">从服务器加载</button>
+  </div>
+
+  <div class="save-bar">
+    <button class="btn btn-success" id="addNewItem" disabled>＋ 新增物品</button>
+    <button class="btn btn-warn" id="saveFile" disabled>💾 保存文件</button>
+    <span class="unsaved-dot" id="unsavedIndicator"></span>
+  </div>
+</div>
+
+<!-- ── Main Layout ──────────────────────── -->
+<div class="main-layout">
+
+  <!-- Left: list -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title" id="listPanelTitle">物品列表</span>
+    </div>
+    <input type="text" class="search-box" id="searchInput" placeholder="按编号或名称搜索…" />
+    <div class="item-list" id="itemList"><div class="empty-state">尚未加载数据</div></div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+  <!-- Right: detail + attr selector -->
+  <div class="panel">
+    <div class="panel-header" style="flex-shrink:0">
+      <span class="panel-title" id="detailPanelTitle">物品详情</span>
+      <button class="btn btn-ghost btn-sm" id="editCurrentItem" disabled>✏️ 编辑</button>
+      <button class="btn btn-ghost btn-sm" id="selectCore">核心属性</button>
+      <button class="btn btn-ghost btn-sm" id="selectNone">清空</button>
     </div>
 
-    <div class="panel">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <h2 style="margin:0">Item Details</h2>
-        <div class="actions" style="margin:0">
-          <button class="btn btn-primary" id="selectCore">Core</button>
-          <button class="btn btn-secondary" id="selectNone">None</button>
+    <div class="right-scroll">
+      <div id="detailArea"><div class="empty-state" id="detailEmptyState">加载数据后选择物品查看详情</div></div>
+
+      <div class="panel-header" style="margin-top:4px;cursor:pointer" id="attrPanelToggle">
+        <span class="panel-title-sm">显示属性</span>
+        <span id="attrPanelArrow" style="font-size:12px;color:#7f8c8d;margin-left:4px">▸</span>
+      </div>
+      <div id="attrPanelBody" style="display:none;flex-direction:column;gap:8px">
+        <input type="text" class="search-box" id="attrSearch" placeholder="筛选属性名…" />
+        <div id="attrSections"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Edit Modal ───────────────────────── -->
+<div class="modal-overlay" id="editModal" style="display:none">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">编辑物品</h2>
+      <button class="modal-close" id="modalClose">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="edit-shell">
+        <div class="edit-topbar">
+          <div class="segmented" id="editModeSeg">
+            <button class="seg-btn active" id="editModeSelected" type="button">已选属性</button>
+            <button class="seg-btn" id="editModeAll" type="button">全部属性</button>
+          </div>
+          <input class="edit-search" id="editSearch" placeholder="搜索字段（支持中文名/原始字段名）…" />
+          <span class="edit-hint" id="editStatusHint">已选属性优先显示</span>
+        </div>
+        <div class="edit-content">
+          <div class="edit-sidebar" id="editSidebar"></div>
+          <div class="edit-main" id="editMain"></div>
         </div>
       </div>
-      <div id="detailArea" class="detail-wrapper">
-        <div class="empty-state">Load ItemInfo.txt and select an item</div>
+    </div>
+    <div class="modal-footer">
+      <span class="modal-tip">✏️ 修改仅在内存中生效，需点击"保存文件"写入磁盘</span>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="modalCancel">取消</button>
+        <button class="btn btn-accent" id="modalConfirm">确认修改</button>
       </div>
-
-      <h2 style="margin-top: 20px;">Select Attributes</h2>
-      <input type="text" class="search-box attr-search" id="attrSearch" placeholder="Filter attributes..." />
-      <div id="attrSections"></div>
     </div>
   </div>
+</div>
 
-  <script>
-    (function () {
-      const CORE_ATTRS = [
-        '编号', 'Name', 'ICON', '类型', '价格', '角色等级', '职业',
-        '最小攻击力常数加成', '最大攻击力常数加成', '防御常数加成',
-        'Mxhp常数加成', 'Mxsp常数加成', 'Mxhp系数加成', 'Mxsp系数加成',
-        'Str常数加成', 'Agi常数加成', 'Dex常数加成', 'Con常数加成', 'Sta常数加成', 'Luk常数加成',
-        'Str系数加成', 'Agi系数加成', 'Dex系数加成', 'Con系数加成', 'Sta系数加成', 'Luk系数加成',
-        '攻击频率常数加成', '攻击频率系数加成', '攻击距离常数加成', '攻击距离系数加成',
-        'hit常数加成', 'flee常数加成', 'crt常数加成', 'mf常数加成',
-        'hit系数加成', 'flee系数加成', 'crt系数加成', 'mf系数加成',
-        'hrec常数加成', 'srec常数加成', 'mspd常数加成', 'col常数加成',
-        'hrec系数加成', 'srec系数加成', 'mspd系数加成', 'col系数加成',
-        '物理抵抗', '耐久', '最大实例化洞数',
-        '描述（道具等级）', '备注'
-      ];
+<script>
+// ─────────────────────────────────────────
+//  Constants
+// ─────────────────────────────────────────
+const CORE_ATTRS = new Set([
+  '编号','Name','ICON','类型','价格','角色等级','职业',
+  'Str常数加成','Agi常数加成','Dex常数加成','Con常数加成','Sta常数加成','Luk常数加成',
+  'Str系数加成','Agi系数加成','Dex系数加成','Con系数加成','Sta系数加成','Luk系数加成',
+  '最小攻击力常数加成','最大攻击力常数加成','防御常数加成',
+  'Mxhp常数加成','Mxsp常数加成',
+  'flee常数加成','hit常数加成','crt常数加成','mf常数加成',
+  '攻击频率常数加成','攻击距离常数加成',
+  'hrec常数加成','srec常数加成','mspd常数加成',
+  // 战斗系数默认勾选（攻速在武器上常用）
+  '最小攻击力系数加成','最大攻击力系数加成','防御系数加成',
+  'Mxhp系数加成','Mxsp系数加成',
+  'flee系数加成','hit系数加成','crt系数加成','mf系数加成',
+  '攻击频率系数加成','攻击距离系数加成',
+  'hrec系数加成','srec系数加成','mspd系数加成','col系数加成',
+  '物理抵抗','耐久','最大实例化洞数',
+  '描述（道具等级）','备注',
+]);
 
-      const ATTR_GROUPS = {
-        'Basic': ['编号', 'Name', 'ICON', '类型', '价格', '体形', '角色等级', '职业', '角色称号', '角色名声', '描述（道具等级）', '备注'],
-        'Combat': ['最小攻击力常数加成', '最大攻击力常数加成', '防御常数加成', 'Mxhp常数加成', 'Mxsp常数加成', 'flee常数加成', 'hit常数加成', 'crt常数加成', 'mf常数加成', '攻击频率常数加成', '攻击距离常数加成'],
-        'Stat Coef': ['Str系数加成', 'Agi系数加成', 'Dex系数加成', 'Con系数加成', 'Sta系数加成', 'Luk系数加成'],
-        'Stat Add': ['Str常数加成', 'Agi常数加成', 'Dex常数加成', 'Con常数加成', 'Sta常数加成', 'Luk常数加成'],
-        'Equipment': ['道具可装备位置', '道具装备所替换位置', '道具拾取进入位置判断', '耐久', '最大实例化洞数', '物理抵抗', '道具左手发挥标识', '道具能量'],
-        'Effect': ['使用效果', '挥舞特效', '道具捆绑特效', '道具掉落模型特效', '道具使用特效'],
-        'Flags': ['交易', '拾取', '丢弃', '可否删除', '是否叠加', '是否实例化', '获得前缀几率', '套装编号', '精炼等级', '安定值', '唯一ID'],
-        'Other': []
-      };
+const ATTR_GROUPS = {
+  '基础信息':['编号','Name','ICON','掉落显示','类型','价格','体形','角色等级','职业','角色称号','角色名声'],
+  '装备位置':['道具可装备位置','道具装备所替换位置','道具拾取进入位置判断'],
+  '战斗常数':[
+    '最小攻击力常数加成','最大攻击力常数加成','防御常数加成',
+    'Mxhp常数加成','Mxsp常数加成',
+    'flee常数加成','hit常数加成','crt常数加成','mf常数加成',
+    '攻击频率常数加成','攻击距离常数加成',
+    'hrec常数加成','srec常数加成','mspd常数加成','col常数加成',
+  ],
+  '战斗系数':[
+    '最小攻击力系数加成','最大攻击力系数加成','防御系数加成',
+    'Mxhp系数加成','Mxsp系数加成',
+    'flee系数加成','hit系数加成','crt系数加成','mf系数加成',
+    '攻击频率系数加成','攻击距离系数加成',
+    'hrec系数加成','srec系数加成','mspd系数加成','col系数加成',
+  ],
+  '属性常数':['Str常数加成','Agi常数加成','Dex常数加成','Con常数加成','Sta常数加成','Luk常数加成'],
+  '属性系数':['Str系数加成','Agi系数加成','Dex系数加成','Con系数加成','Sta系数加成','Luk系数加成'],
+  '物品属性':['耐久','最大实例化洞数','物理抵抗','道具左手发挥标识','道具能量'],
+  '标志位':['交易','拾取','丢弃','可否删除','是否叠加','是否实例化','获得前缀几率','套装编号','精炼等级','安定值','唯一ID'],
+  '特效':['使用效果','挥舞特效','道具捆绑特效','道具捆绑特效dummy',
+    '道具显示特效(道具放在物品栏第一格的显示特效)','道具掉落模型特效','道具使用特效'],
+  '描述':['描述（道具等级）','备注'],
+  '船只':['船耐久恢复','可装炮数量','船员人数','人员标配','货舱容量','补给消耗','炮弹飞行速度','船移动速度'],
+};
 
-      let headers = [];
-      let items = [];
-      let attrChecked = {};
+// Character (CharacterInfo) constants
+const CHAR_CORE_ATTRS = new Set([
+  'ID','lv','mxhp','hp','mxsp','sp','mnatk','mxatk','resist','def','hit','flee','crt','mf',
+  'str','agi','dex','con','sta','luk','job','exp','nexp','fame','title','guild',
+  'hrec','srec','aspd','adis','mspd','col',
+]);
 
-      const fileInput = document.getElementById('fileInput');
-      const searchInput = document.getElementById('searchInput');
-      const itemList = document.getElementById('itemList');
-      const attrSearch = document.getElementById('attrSearch');
-      const attrSections = document.getElementById('attrSections');
-      const detailArea = document.getElementById('detailArea');
+const CHAR_ATTR_GROUPS = {
+  '基础':['ID'],
+  '战斗':['lv','mxhp','hp','mxsp','sp','mnatk','mxatk','resist','def','hit','flee','crt','mf'],
+  '属性':['str','agi','dex','con','sta','luk'],
+  '回复':['hrec','srec','aspd','adis','chase_adis','mspd','col'],
+  '成长':['job','exp','nexp','fame','ap','tp','gd'],
+  '其他':['title','guild','left_rad','light','mobexp','getexp','vision','noise'],
+};
 
-      function parseTsv(text) {
-        const lines = text.split(/\r?\n/).filter(l => l.trim());
-        if (lines.length < 2) return { headers: [], rows: [] };
-        const rawHeader = lines[0].replace(/^\/\//, '').split('\t');
-        const headers = rawHeader.map(h => h.trim());
-        const rows = [];
-        for (let i = 1; i < lines.length; i++) {
-          const line = lines[i];
-          const content = line.startsWith('//') ? line.slice(2) : line;
-          if (line.startsWith('//') && !/^\d/.test(content.trim())) continue;
-          const cells = line.split('\t');
-          const row = {};
-          headers.forEach((h, j) => {
-            let val = (cells[j] || '').trim();
-            if (h === '编号' && val.startsWith('//')) val = val.slice(2);
-            row[h] = val;
-          });
-          if (row['编号'] || row['Name']) rows.push(row);
-        }
-        return { headers, rows };
-      }
+// Display names for character fields (fallback when header is GBK-decoded differently)
+const CHAR_DISPLAY_NAMES = {
+  'ID':'ID','lv':'等级','mxhp':'最大HP','hp':'当前HP','mxsp':'最大SP','sp':'当前SP',
+  'mnatk':'最小攻击','mxatk':'最大攻击','resist':'抗性','def':'防御',
+  'hit':'命中','flee':'回避','crt':'暴击','mf':'魔法格',
+  'str':'力量','agi':'敏捷','dex':'专注','con':'体质','sta':'精神','luk':'幸运',
+  'hrec':'HP回复','srec':'SP回复','aspd':'攻速','adis':'攻距','mspd':'移速','col':'采集',
+  'job':'职业','exp':'经验','nexp':'下级经验','fame':'名声','title':'称号','guild':'公会',
+};
 
-      function renderItemList(filter) {
-        const term = (filter || '').toLowerCase().trim();
-        const filtered = term
-          ? items.filter(i =>
-              (i['编号'] || '').toLowerCase().includes(term) ||
-              (i['Name'] || '').toLowerCase().includes(term))
-          : items.slice(0, 800);
-        itemList.innerHTML = filtered.length
-          ? filtered.map((item, idx) => {
-              const id = item['编号'] || '-';
-              const name = item['Name'] || '-';
-              return `<div class="item-row" data-idx="${idx}" data-id="${id}">
-                <span class="item-id">${id}</span>
-                <span>${name}</span>
-              </div>`;
-            }).join('')
-          : '<div class="empty-state">No items match</div>';
+// Groups expanded by default in edit modal
+const EDIT_EXPANDED = new Set(['基础信息','战斗常数','属性常数','描述']);
 
-        itemList.querySelectorAll('.item-row').forEach(el => {
-          el.addEventListener('click', () => selectItem(el.dataset.id, el.dataset.idx));
-        });
-      }
+// ── Display name translations ─────────────────────
+const DISPLAY_NAMES = {
+  'Name'       : '名称',
+  'ICON'       : '图标ID',
+  // Stats
+  'Str常数加成' : '力量(常数)', 'Str系数加成' : '力量(系数)',
+  'Agi常数加成' : '敏捷(常数)', 'Agi系数加成' : '敏捷(系数)',
+  'Dex常数加成' : '专注(常数)', 'Dex系数加成' : '专注(系数)',
+  'Con常数加成' : '体质(常数)', 'Con系数加成' : '体质(系数)',
+  'Sta常数加成' : '精神(常数)', 'Sta系数加成' : '精神(系数)',
+  'Luk常数加成' : '幸运(常数)', 'Luk系数加成' : '幸运(系数)',
+  // HP / SP
+  'Mxhp常数加成': '最大HP(常数)', 'Mxhp系数加成': '最大HP(系数)',
+  'Mxsp常数加成': '最大SP(常数)', 'Mxsp系数加成': '最大SP(系数)',
+  // Combat abbreviations
+  'flee常数加成' : '回避(常数)',    'flee系数加成' : '回避(系数)',
+  'hit常数加成'  : '命中(常数)',    'hit系数加成'  : '命中(系数)',
+  'crt常数加成'  : '暴击(常数)',    'crt系数加成'  : '暴击(系数)',
+  'mf常数加成'   : '魔法格(常数)',  'mf系数加成'   : '魔法格(系数)',
+  'hrec常数加成' : 'HP回复(常数)',  'hrec系数加成' : 'HP回复(系数)',
+  'srec常数加成' : 'SP回复(常数)',  'srec系数加成' : 'SP回复(系数)',
+  'mspd常数加成' : '移动速度(常数)','mspd系数加成' : '移动速度(系数)',
+  'col常数加成'  : '采集(常数)',    'col系数加成'  : '采集(系数)',
+  // Attack
+  '最小攻击力常数加成': '最小攻击(常数)', '最小攻击力系数加成': '最小攻击(系数)',
+  '最大攻击力常数加成': '最大攻击(常数)', '最大攻击力系数加成': '最大攻击(系数)',
+  '防御常数加成'      : '防御(常数)',     '防御系数加成'      : '防御(系数)',
+  '攻击频率常数加成'  : '攻速(常数)',     '攻击频率系数加成'  : '攻速(系数)',
+  '攻击距离常数加成'  : '攻距(常数)',     '攻击距离系数加成'  : '攻距(系数)',
+};
 
-      function selectItem(id, idx) {
-        itemList.querySelectorAll('.item-row').forEach(e => e.classList.remove('selected'));
-        const row = itemList.querySelector(`[data-id="${id}"]`);
-        if (row) row.classList.add('selected');
-        renderDetail(items.find(i => (i['编号'] || '').toString() === id));
-      }
+function displayName(key) {
+  if (activeTab === 'character') return CHAR_DISPLAY_NAMES[key] || key;
+  return DISPLAY_NAMES[key] || key;
+}
 
-      function getGroupedHeaders() {
-        const used = new Set();
-        const groups = {};
-        for (const [name, attrs] of Object.entries(ATTR_GROUPS)) {
-          const list = name === 'Other'
-            ? headers.filter(h => !used.has(h))
-            : (attrs.length ? attrs.filter(a => headers.includes(a)) : []);
-          list.forEach(h => used.add(h));
-          if (list.length) groups[name] = list;
-        }
-        if (!groups['Other']) {
-          const rest = headers.filter(h => !used.has(h));
-          if (rest.length) groups['Other'] = rest;
-        }
-        return groups;
-      }
+function getPrimaryKey() { return activeTab === 'character' ? 'ID' : '编号'; }
+function getNameKey() { return activeTab === 'character' ? nameKeyColumn : 'Name'; }
+function getAttrGroups() { return activeTab === 'character' ? CHAR_ATTR_GROUPS : ATTR_GROUPS; }
+function getCoreAttrs() { return activeTab === 'character' ? CHAR_CORE_ATTRS : CORE_ATTRS; }
 
-      function renderAttrSections() {
-        if (!headers.length) return;
-        const term = (attrSearch.value || '').toLowerCase().trim();
-        const groups = getGroupedHeaders();
-        attrSections.innerHTML = Object.entries(groups).map(([groupName, attrs]) => {
-          const filtered = term ? attrs.filter(a => a.toLowerCase().includes(term)) : attrs;
-          if (filtered.length === 0) return '';
-          return `
-            <div class="attr-section ${groupName !== 'Basic' && groupName !== 'Combat' ? 'collapsed' : ''}" data-group="${groupName}">
-              <div class="attr-section-title">${groupName} (${filtered.length})</div>
-              <div class="attr-section-chips">
-                ${filtered.map(h => {
-                  const checked = attrChecked[h];
-                  return `<label class="attr-chip ${checked ? 'checked' : ''}" data-attr="${h}">
-                    <input type="checkbox" ${checked ? 'checked' : ''} style="margin-right:4px" />
-                    ${h}
-                  </label>`;
-                }).join('')}
-              </div>
-            </div>`;
-        }).join('');
+// ─────────────────────────────────────────
+//  State
+// ─────────────────────────────────────────
+let activeTab = 'item';
+let nameKeyColumn = ''; // for character: column 2 header, set after parse
 
-        attrSections.querySelectorAll('.attr-section-title').forEach(el => {
-          el.addEventListener('click', () => el.parentElement.classList.toggle('collapsed'));
-        });
-        attrSections.querySelectorAll('.attr-chip').forEach(el => {
-          const cb = el.querySelector('input');
-          el.addEventListener('click', (e) => {
-            if (e.target === cb) return;
-            cb.checked = !cb.checked;
-            attrChecked[el.dataset.attr] = cb.checked;
-            el.classList.toggle('checked', cb.checked);
-            const cur = itemList.querySelector('.item-row.selected');
-            if (cur) renderDetail(items.find(i => (i['编号'] || '').toString() === cur.dataset.id));
-          });
-        });
-      }
+let headers    = [];
+let rawLines   = [];
+let items      = [];       // {_lineIdx, _dirty, _isNew, ...}
+let attrChecked = {};
+let currentFilePath = '';
+let selectedItemNo  = null;
+let editingItem     = null;
+let editingDraft    = null;
+let editMode        = 'selected';
+let editActiveGroup = '';
+let editSearchTerm  = '';
 
-      function hasValue(val) {
-        if (val == null || val === '') return false;
-        const s = String(val).trim();
-        if (s === '-' || s === '') return false;
-        const parts = s.split(',').map(p => p.trim());
-        const allZero = parts.every(p => p === '0' || p === '0.0' || parseFloat(p) === 0);
-        return !allZero;
-      }
+const PAGE_SIZE = 50;
+let currentPage = 1;
 
-      function renderDetail(item) {
-        if (!item) {
-          detailArea.innerHTML = '<div class="empty-state">Select an item</div>';
-          return;
-        }
-        const selected = [
-          ...CORE_ATTRS.filter(k => attrChecked[k]),
-          ...headers.filter(k => attrChecked[k] && !CORE_ATTRS.includes(k))
-        ].filter(k => hasValue(item[k]));
-        if (selected.length === 0) {
-          detailArea.innerHTML = '<div class="empty-state">All selected attributes are zero or empty</div>';
-          return;
-        }
-        detailArea.innerHTML = `
-          <div class="attr-grid-detail">
-            ${selected.map(k => {
-              const v = (item[k] ?? '-').toString().replace(/</g, '&lt;');
-              return `<div class="attr-cell"><div class="attr-name">${k}</div><div class="attr-value">${v}</div></div>`;
-            }).join('')}
-          </div>`;
-      }
+function createTabState() {
+  return {
+    headers: [], rawLines: [], items: [], attrChecked: {},
+    currentFilePath: '', selectedItemNo: null, currentPage: 1, nameKeyColumn: ''
+  };
+}
+let itemState = createTabState();
+let charState = createTabState();
 
-      document.getElementById('selectCore').addEventListener('click', () => {
-        headers.forEach(h => { attrChecked[h] = CORE_ATTRS.includes(h); });
-        renderAttrSections();
-        const cur = itemList.querySelector('.item-row.selected');
-        if (cur) renderDetail(items.find(i => (i['编号'] || '').toString() === cur.dataset.id));
+function saveCurrentToTabState() {
+  const s = activeTab === 'item' ? itemState : charState;
+  s.headers = [...headers];
+  s.rawLines = [...rawLines];
+  s.items = items.map(it => ({ ...it }));
+  s.attrChecked = { ...attrChecked };
+  s.currentFilePath = currentFilePath;
+  s.selectedItemNo = selectedItemNo;
+  s.currentPage = currentPage;
+  s.nameKeyColumn = nameKeyColumn;
+}
+
+function loadFromTabState() {
+  const s = activeTab === 'item' ? itemState : charState;
+  headers = [...s.headers];
+  rawLines = [...s.rawLines];
+  items = s.items.map(it => ({ ...it }));
+  attrChecked = { ...s.attrChecked };
+  currentFilePath = s.currentFilePath;
+  selectedItemNo = s.selectedItemNo;
+  currentPage = s.currentPage;
+  nameKeyColumn = s.nameKeyColumn || '';
+}
+
+// ─────────────────────────────────────────
+//  DOM refs
+// ─────────────────────────────────────────
+const $itemList      = document.getElementById('itemList');
+const $searchInput   = document.getElementById('searchInput');
+const $detailArea    = document.getElementById('detailArea');
+const $attrSections  = document.getElementById('attrSections');
+const $attrSearch    = document.getElementById('attrSearch');
+const $editModal     = document.getElementById('editModal');
+const $modalTitle    = document.getElementById('modalTitle');
+const $editSidebar   = document.getElementById('editSidebar');
+const $editMain      = document.getElementById('editMain');
+const $editSearch    = document.getElementById('editSearch');
+const $editModeSelected = document.getElementById('editModeSelected');
+const $editModeAll      = document.getElementById('editModeAll');
+const $editStatusHint   = document.getElementById('editStatusHint');
+const $editCurrentItem = document.getElementById('editCurrentItem');
+const $addNewItem    = document.getElementById('addNewItem');
+const $saveFile      = document.getElementById('saveFile');
+const $unsaved       = document.getElementById('unsavedIndicator');
+const $currentFilePath = document.getElementById('currentFilePath');
+
+// ─────────────────────────────────────────
+//  Parse
+// ─────────────────────────────────────────
+function parseTsv(text, mode) {
+  mode = mode || 'item';
+  const isChar = mode === 'character';
+  const pk = isChar ? 'ID' : '编号';
+
+  const lines = text.split(/\r?\n/);
+  const headerIdx = lines.findIndex(l => l.trim());
+  if (headerIdx === -1) return { headers: [], rows: [], rawLines: lines, nameKeyColumn: '' };
+
+  const rawHdr = lines[headerIdx].replace(/^\/\//, '').split('\t');
+  const hdrs = rawHdr.map(h => h.trim()).filter(h => h);
+
+  let nameKey = '';
+  if (isChar && hdrs.length >= 2) nameKey = hdrs[1];
+
+  const rows = [];
+  for (let i = headerIdx + 1; i < lines.length; i++) {
+    const line = lines[i];
+    if (!line.trim()) continue;
+    const inner = line.startsWith('//') ? line.slice(2) : line;
+    if (line.startsWith('//') && !/^\d/.test(inner.trim())) continue;
+
+    const cells = line.split('\t');
+    const row = { _lineIdx: i, _dirty: false, _isNew: false };
+    hdrs.forEach((h, j) => {
+      let v = (cells[j] || '').trim();
+      if ((h === '编号' || h === 'ID') && v.startsWith('//')) v = v.slice(2);
+      row[h] = v;
+    });
+
+    if (isChar) {
+      if (row['ID'] || (nameKey && row[nameKey])) rows.push(row);
+    } else {
+      if (row['编号'] || row['Name']) rows.push(row);
+    }
+  }
+  return { headers: hdrs, rows, rawLines: lines, nameKeyColumn: nameKey };
+}
+
+// ─────────────────────────────────────────
+//  Load
+// ─────────────────────────────────────────
+function loadFromContent(text, filePath) {
+  const mode = activeTab;
+  if (filePath !== undefined) {
+    currentFilePath = filePath;
+    $currentFilePath.textContent = filePath ? filePath : '未加载文件';
+    $currentFilePath.title = filePath;
+  }
+  const parsed = parseTsv(text, mode);
+  headers  = parsed.headers;
+  rawLines = parsed.rawLines;
+  items    = parsed.rows;
+  nameKeyColumn = parsed.nameKeyColumn || '';
+  selectedItemNo = null;
+  currentPage = 1;
+
+  attrChecked = {};
+  const coreAttrs = getCoreAttrs();
+  headers.forEach(h => { attrChecked[h] = coreAttrs.has(h); });
+
+  renderItemList();
+  renderAttrSections();
+  const emptyMsg = mode === 'character' ? '请在左侧选择怪物' : '请在左侧选择物品';
+  $detailArea.innerHTML = '<div class="empty-state">' + emptyMsg + '</div>';
+  $editCurrentItem.disabled = true;
+  $addNewItem.disabled = false;
+  updateUnsavedStatus();
+  updateTabLabels();
+}
+
+function updateTabLabels() {
+  document.getElementById('listPanelTitle').textContent = activeTab === 'character' ? '怪物列表' : '物品列表';
+  document.getElementById('detailPanelTitle').textContent = activeTab === 'character' ? '怪物详情' : '物品详情';
+  $searchInput.placeholder = activeTab === 'character' ? '按ID或名称搜索…' : '按编号或名称搜索…';
+  $addNewItem.textContent = activeTab === 'character' ? '＋ 新增怪物' : '＋ 新增物品';
+}
+
+// ─────────────────────────────────────────
+//  Item list + pagination
+// ─────────────────────────────────────────
+function getFilteredItems() {
+  const pk = getPrimaryKey();
+  const nk = getNameKey();
+  const q = $searchInput.value.toLowerCase().trim();
+  return q
+    ? items.filter(it => (it[pk]||'').toString().includes(q) || (it[nk]||'').toLowerCase().includes(q))
+    : items;
+}
+
+function goToItemPage(no) {
+  const pk = getPrimaryKey();
+  const filtered = getFilteredItems();
+  const idx = filtered.findIndex(it => it[pk] === no);
+  if (idx !== -1) currentPage = Math.floor(idx / PAGE_SIZE) + 1;
+}
+
+function renderPagination(total, totalPages) {
+  const $pg = document.getElementById('pagination');
+  if (total === 0) { $pg.innerHTML = ''; return; }
+  const start = (currentPage - 1) * PAGE_SIZE + 1;
+  const end   = Math.min(currentPage * PAGE_SIZE, total);
+  const atFirst = currentPage === 1;
+  const atLast  = currentPage === totalPages;
+  $pg.innerHTML = `
+    <span class="page-info">${start}–${end} / ${total} 项</span>
+    <div class="page-btns">
+      <button class="btn btn-ghost btn-sm" id="pgFirst" ${atFirst?'disabled':''}>«</button>
+      <button class="btn btn-ghost btn-sm" id="pgPrev"  ${atFirst?'disabled':''}>‹</button>
+      <span class="page-cur">${currentPage} / ${totalPages}</span>
+      <button class="btn btn-ghost btn-sm" id="pgNext"  ${atLast?'disabled':''}>›</button>
+      <button class="btn btn-ghost btn-sm" id="pgLast"  ${atLast?'disabled':''}>»</button>
+    </div>`;
+  document.getElementById('pgFirst').addEventListener('click', () => { currentPage = 1; renderItemList(); });
+  document.getElementById('pgPrev').addEventListener('click',  () => { if (currentPage > 1) { currentPage--; renderItemList(); } });
+  document.getElementById('pgNext').addEventListener('click',  () => { if (currentPage < totalPages) { currentPage++; renderItemList(); } });
+  document.getElementById('pgLast').addEventListener('click',  () => { currentPage = totalPages; renderItemList(); });
+}
+
+function renderItemList() {
+  const pk = getPrimaryKey();
+  const nk = getNameKey();
+  const filtered = getFilteredItems();
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  if (currentPage > totalPages) currentPage = totalPages;
+
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageItems = filtered.slice(start, start + PAGE_SIZE);
+
+  const emptyLabel = headers.length === 0
+    ? '尚未加载数据'
+    : (activeTab === 'character' ? '无匹配怪物' : '无匹配物品');
+  if (!filtered.length) {
+    $itemList.innerHTML = '<div class="empty-state">' + emptyLabel + '</div>';
+    document.getElementById('pagination').innerHTML = '';
+    return;
+  }
+
+  $itemList.innerHTML = pageItems.map(it => {
+    const no = it[pk];
+    const sel = no === selectedItemNo ? ' selected' : '';
+    const badge = it._isNew
+      ? '<span class="badge-new">新</span>'
+      : it._dirty ? '<span class="badge-dirty">改</span>' : '';
+    return `<div class="item-row${sel}" data-no="${no}">
+      <span class="item-no">${no||'?'}</span>
+      <span class="item-name">${it[nk]||'(无名)'}</span>
+      ${badge}
+    </div>`;
+  }).join('');
+
+  $itemList.querySelectorAll('.item-row').forEach(el => {
+    el.addEventListener('click', () => selectItem(el.dataset.no));
+  });
+
+  renderPagination(filtered.length, totalPages);
+}
+
+// ─────────────────────────────────────────
+//  Select item
+// ─────────────────────────────────────────
+function selectItem(no) {
+  const pk = getPrimaryKey();
+  selectedItemNo = no;
+  renderItemList();
+  const item = items.find(it => it[pk] === no);
+  if (!item) return;
+  renderDetail(item);
+  $editCurrentItem.disabled = false;
+}
+
+// ─────────────────────────────────────────
+//  Detail
+// ─────────────────────────────────────────
+function hasValue(val) {
+  if (val === null || val === undefined) return false;
+  const s = String(val).trim();
+  if (!s || s === '-' || s === '0' || s === '0.0') return false;
+  if (/^[\d.,]+$/.test(s) && s.split(',').every(p => !parseFloat(p))) return false;
+  return true;
+}
+
+/** Format value for display: 攻速→百分比, 范围→a~b */
+function formatDisplayValue(field, val) {
+  const s = String(val).trim();
+  const isAttackSpeed = field === '攻击频率常数加成' || field === '攻击频率系数加成';
+  if (isAttackSpeed && /^[\d.,]+$/.test(s)) {
+    const parts = s.split(',').map(p => {
+      const n = parseFloat(p.trim());
+      return isNaN(n) ? p : (n / 10) + '%';
+    });
+    return parts[0] === parts[1] ? parts[0] : parts.join('~');
+  }
+  if (/^[\d.]+,[\d.]+$/.test(s)) {
+    return s.replace(',', '~');
+  }
+  return s;
+}
+
+function renderDetail(item) {
+  const checkedHdrs = headers.filter(h => attrChecked[h]);
+  const pairs = checkedHdrs.map(h => [h, item[h]]).filter(([, v]) => hasValue(v));
+  if (!pairs.length) {
+    $detailArea.innerHTML = '<div class="empty-state">所选属性均无有效值</div>';
+    return;
+  }
+  const cells = pairs.map(([h, v]) => {
+    const formatted = formatDisplayValue(h, v);
+    const num = parseFloat(v);
+    const cls = isNaN(num) ? '' : num > 0 ? ' positive' : num < 0 ? ' negative' : '';
+    return `<div class="attr-cell">
+      <div class="attr-name" title="${h}">${displayName(h)}</div>
+      <div class="attr-val${cls}">${formatted}</div>
+    </div>`;
+  }).join('');
+  const pk = getPrimaryKey();
+  const nk = getNameKey();
+  const meta = activeTab === 'character'
+    ? `等级: ${item['lv']||'-'} &nbsp; HP: ${item['hp']||'-'}/${item['mxhp']||'-'} &nbsp; SP: ${item['sp']||'-'}/${item['mxsp']||'-'}`
+    : `类型: ${item['类型']||'-'} &nbsp; 价格: ${item['价格']||'-'}`;
+  $detailArea.innerHTML = `
+    <div class="detail-header">
+      <div class="item-full-name">[${item[pk]||'?'}] ${item[nk]||'(无名)'}</div>
+      <div class="item-meta">${meta}</div>
+    </div>
+    <div class="attr-grid">${cells}</div>`;
+}
+
+// ─────────────────────────────────────────
+//  Attribute selector
+// ─────────────────────────────────────────
+function getGroupedHeaders() {
+  const placed = new Set();
+  const groups = {};
+  const attrGroups = getAttrGroups();
+  for (const [gName, gFields] of Object.entries(attrGroups)) {
+    const inGroup = gFields.filter(f => headers.includes(f));
+    if (inGroup.length) { groups[gName] = inGroup; inGroup.forEach(f => placed.add(f)); }
+  }
+  const rest = headers.filter(h => !placed.has(h));
+  if (rest.length) groups['其他'] = rest;
+  return groups;
+}
+
+function renderAttrSections(filter) {
+  const q = (filter || $attrSearch.value).toLowerCase().trim();
+  const grouped = getGroupedHeaders();
+  $attrSections.innerHTML = Object.entries(grouped).map(([gName, fields]) => {
+    const vis = q
+      ? fields.filter(f => f.toLowerCase().includes(q) || displayName(f).includes(q))
+      : fields;
+    if (!vis.length) return '';
+    const chips = vis.map(f => {
+      const cls = attrChecked[f] ? ' checked' : '';
+      return `<span class="attr-chip${cls}" data-field="${f}" title="${f}">${displayName(f)}</span>`;
+    }).join('');
+    return `<div class="attr-section">
+      <div class="attr-section-title" data-section="${gName}">
+        <span>${gName}</span><span>▾</span>
+      </div>
+      <div class="attr-section-chips" data-section-body="${gName}">${chips}</div>
+    </div>`;
+  }).join('');
+
+  $attrSections.querySelectorAll('.attr-section-title').forEach(el => {
+    el.addEventListener('click', () => {
+      const body = $attrSections.querySelector(`[data-section-body="${el.dataset.section}"]`);
+      if (body) body.style.display = body.style.display === 'none' ? '' : 'none';
+    });
+  });
+  $attrSections.querySelectorAll('.attr-chip').forEach(el => {
+    el.addEventListener('click', () => {
+      attrChecked[el.dataset.field] = !attrChecked[el.dataset.field];
+      el.classList.toggle('checked', attrChecked[el.dataset.field]);
+      const pk = getPrimaryKey();
+      if (selectedItemNo) renderDetail(items.find(it => it[pk] === selectedItemNo));
+    });
+  });
+}
+
+// ─────────────────────────────────────────
+//  Edit modal
+// ─────────────────────────────────────────
+
+function uniq(arr) {
+  const seen = new Set();
+  const out = [];
+  arr.forEach(v => {
+    if (!seen.has(v)) { seen.add(v); out.push(v); }
+  });
+  return out;
+}
+
+function getAlwaysEditFields() {
+  const always = activeTab === 'character'
+    ? ['ID','lv','mxhp','hp','mxsp','sp','str','agi','dex','con','sta','luk','job']
+    : ['编号','Name','ICON','类型','价格','角色等级','职业'];
+  return always.filter(h => headers.includes(h));
+}
+
+function getSelectedEditFields() {
+  const core = headers.filter(h => attrChecked[h]);
+  return uniq([...getAlwaysEditFields(), ...core]);
+}
+
+function buildGroupedFieldMap(fields) {
+  const placed = new Set();
+  const groups = new Map();
+  const attrGroups = getAttrGroups();
+
+  groups.set(editMode === 'selected' ? '已选属性' : '全部属性', fields);
+
+  for (const [gName, gFields] of Object.entries(attrGroups)) {
+    const inGroup = gFields.filter(f => fields.includes(f));
+    if (inGroup.length) {
+      groups.set(gName, inGroup);
+      inGroup.forEach(f => placed.add(f));
+    }
+  }
+
+  const rest = fields.filter(h => !placed.has(h));
+  if (rest.length) groups.set('其他', rest);
+  return groups;
+}
+
+function fieldMatchesSearch(field, term) {
+  if (!term) return true;
+  const t = term.toLowerCase();
+  return field.toLowerCase().includes(t) || displayName(field).includes(term);
+}
+
+function renderEditSidebar(groups) {
+  const items = [...groups.entries()].map(([name, fields]) => {
+    const active = name === editActiveGroup ? ' active' : '';
+    return `<div class="edit-group-item${active}" data-group="${name}">
+      <span class="edit-group-name" title="${name}">${name}</span>
+      <span class="edit-group-count">${fields.length}</span>
+    </div>`;
+  }).join('');
+  $editSidebar.innerHTML = items || `<div class="empty-state" style="padding:12px">无可编辑字段</div>`;
+  $editSidebar.querySelectorAll('.edit-group-item').forEach(el => {
+    el.addEventListener('click', () => {
+      editActiveGroup = el.dataset.group;
+      renderEditUI();
+    });
+  });
+}
+
+function renderEditMain(groupName, fields) {
+  const term = editSearchTerm.trim();
+  const filtered = fields.filter(f => fieldMatchesSearch(f, term));
+  const header = `<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px">
+    <div style="font-weight:bold;color:#a0c4ff">${groupName}</div>
+    <div style="font-size:11px;color:#7f8c8d">${filtered.length} / ${fields.length}</div>
+  </div>`;
+
+  if (!filtered.length) {
+    $editMain.innerHTML = header + `<div class="empty-state">无匹配字段</div>`;
+    return;
+  }
+
+  const cells = filtered.map(f => {
+    const raw = editingDraft?.[f] ?? '';
+    const val = String(raw);
+    const isLong = f === '描述（道具等级）' || f === '备注';
+    const label = displayName(f);
+    const keyHint = f !== label ? `<div class="field-key" title="${f}">${f}</div>` : '';
+    if (isLong) {
+      return `<div class="field-box" style="grid-column:1/-1">
+        <label class="field-label" title="${f}">${label}</label>
+        ${keyHint}
+        <textarea class="field-textarea" data-field="${f}">${val.replace(/</g,'&lt;')}</textarea>
+      </div>`;
+    }
+    return `<div class="field-box">
+      <label class="field-label" title="${f}">${label}</label>
+      ${keyHint}
+      <input class="field-input" data-field="${f}" type="text" value="${val.replace(/"/g,'&quot;').replace(/</g,'&lt;')}">
+    </div>`;
+  }).join('');
+
+  $editMain.innerHTML = header + `<div class="edit-fields">${cells}</div>`;
+}
+
+function setEditMode(nextMode) {
+  editMode = nextMode;
+  $editModeSelected.classList.toggle('active', nextMode === 'selected');
+  $editModeAll.classList.toggle('active', nextMode === 'all');
+  $editStatusHint.textContent = nextMode === 'selected'
+    ? '仅显示已选属性（可切换到全部属性）'
+    : '全部属性（字段很多，建议用搜索）';
+}
+
+function renderEditUI() {
+  if (!editingDraft) return;
+  const fields = editMode === 'selected' ? getSelectedEditFields() : [...headers];
+  const groups = buildGroupedFieldMap(fields);
+  if (!editActiveGroup || !groups.has(editActiveGroup)) {
+    editActiveGroup = [...groups.keys()][0] || '';
+  }
+  renderEditSidebar(groups);
+  const groupFields = groups.get(editActiveGroup) || [];
+  renderEditMain(editActiveGroup, groupFields);
+}
+
+function openEditModal(item) {
+  const pk = getPrimaryKey();
+  const nk = getNameKey();
+  editingItem = item;
+  editingDraft = { ...item };
+  editSearchTerm = '';
+  $editSearch.value = '';
+  setEditMode('selected');
+  editActiveGroup = '已选属性';
+  const isNew = item._isNew && !item._lineIdx;
+  const prefix = activeTab === 'character' ? (isNew ? '新增怪物' : '编辑怪物') : (isNew ? '新增物品' : '编辑物品');
+  $modalTitle.textContent = isNew ? prefix : `${prefix}: [${item[pk]||'?'}] ${item[nk]||''}`;
+
+  // Bind once (idempotent)
+  if (!$editMain.dataset.bound) {
+    $editMain.addEventListener('input', (e) => {
+      const el = e.target;
+      const field = el?.dataset?.field;
+      if (!field) return;
+      editingDraft[field] = el.value;
+    });
+    $editMain.dataset.bound = '1';
+  }
+
+  renderEditUI();
+  $editModal.style.display = 'flex';
+}
+
+function closeEditModal() {
+  $editModal.style.display = 'none';
+  editingItem = null;
+  editingDraft = null;
+  editActiveGroup = '';
+  editSearchTerm = '';
+}
+
+function applyEditChanges() {
+  if (!editingItem || !editingDraft) return;
+  const pk = getPrimaryKey();
+  const updated = { ...editingItem, ...editingDraft };
+
+  const idx = items.findIndex(it =>
+    (editingItem._lineIdx !== undefined && it._lineIdx === editingItem._lineIdx) ||
+    (editingItem._lineIdx === undefined && it[pk] === editingItem[pk])
+  );
+
+  if (idx !== -1) {
+    items[idx] = { ...items[idx], ...updated, _dirty: true };
+  } else {
+    updated._dirty = true;
+    items.push(updated);
+  }
+
+  closeEditModal();
+  const no = updated[pk];
+  if (no) {
+    selectedItemNo = no;
+    goToItemPage(no);
+  }
+  renderItemList();
+  if (no) renderDetail(items.find(it => it[pk] === no));
+  updateUnsavedStatus();
+}
+
+// ─────────────────────────────────────────
+//  New item
+// ─────────────────────────────────────────
+function openNewItemModal() {
+  const pk = getPrimaryKey();
+  const maxNo = items.reduce((m, it) => {
+    const n = parseInt(it[pk] || 0, 10);
+    return n > m ? n : m;
+  }, 0);
+  const newNo = String(maxNo + 1);
+  const blank = { _lineIdx: undefined, _dirty: true, _isNew: true };
+  headers.forEach(h => { blank[h] = ''; });
+  blank[pk] = newNo;
+  openEditModal(blank);
+}
+
+// ─────────────────────────────────────────
+//  Save
+// ─────────────────────────────────────────
+function itemToLine(item) {
+  return headers.map(h => item[h] ?? '').join('\t');
+}
+
+function buildSaveContent() {
+  const outputLines = [...rawLines];
+  // Update dirty existing items
+  items.forEach(item => {
+    if (item._dirty && !item._isNew && item._lineIdx !== undefined) {
+      outputLines[item._lineIdx] = itemToLine(item);
+    }
+  });
+  // Append new items
+  items.filter(i => i._isNew).forEach(item => {
+    outputLines.push(itemToLine(item));
+  });
+  return outputLines.join('\n');
+}
+
+async function saveToFile() {
+  const content = buildSaveContent();
+  const saveCmd = activeTab === 'character' ? 'save_character_file' : 'save_item_file';
+  const defaultName = activeTab === 'character' ? 'CharacterInfo.txt' : 'ItemInfo.txt';
+
+  if (window.__TAURI__) {
+    try {
+      await window.__TAURI__.core.invoke(saveCmd, {
+        path: currentFilePath,
+        content,
       });
+      items.forEach(it => { it._dirty = false; it._isNew = false; });
+      updateUnsavedStatus();
+      renderItemList();
+      alert('✅ 已保存到 ' + currentFilePath);
+    } catch (e) {
+      alert('❌ 保存失败：' + e);
+    }
+  } else {
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = defaultName;
+    a.click();
+    URL.revokeObjectURL(url);
+    items.forEach(it => { it._dirty = false; it._isNew = false; });
+    updateUnsavedStatus();
+    renderItemList();
+  }
+}
 
-      document.getElementById('selectNone').addEventListener('click', () => {
-        headers.forEach(h => { attrChecked[h] = false; });
-        renderAttrSections();
-        const cur = itemList.querySelector('.item-row.selected');
-        if (cur) renderDetail(items.find(i => (i['编号'] || '').toString() === cur.dataset.id));
-      });
+// ─────────────────────────────────────────
+//  Unsaved status
+// ─────────────────────────────────────────
+function updateUnsavedStatus() {
+  const dirtyCount = items.filter(it => it._dirty || it._isNew).length;
+  if (dirtyCount > 0) {
+    $unsaved.textContent = `● ${dirtyCount} 处未保存`;
+    $saveFile.disabled = false;
+  } else {
+    $unsaved.textContent = '';
+    $saveFile.disabled = true;
+  }
+}
 
-      attrSearch.addEventListener('input', () => renderAttrSections());
+// ─────────────────────────────────────────
+//  Event listeners
+// ─────────────────────────────────────────
+$searchInput.addEventListener('input', () => { currentPage = 1; renderItemList(); });
+$attrSearch.addEventListener('input', () => renderAttrSections());
 
-      searchInput.addEventListener('input', () => renderItemList(searchInput.value));
+// Edit modal controls
+$editModeSelected.addEventListener('click', () => {
+  setEditMode('selected');
+  editActiveGroup = '已选属性';
+  renderEditUI();
+});
+$editModeAll.addEventListener('click', () => {
+  setEditMode('all');
+  editActiveGroup = '全部属性';
+  renderEditUI();
+});
+$editSearch.addEventListener('input', () => {
+  editSearchTerm = $editSearch.value || '';
+  renderEditUI();
+});
 
-      function loadFromContent(text) {
-        const { headers: h, rows } = parseTsv(text);
-        headers = h.filter(x => x);
-        items = rows;
-        headers.forEach(a => {
-          if (attrChecked[a] === undefined) attrChecked[a] = CORE_ATTRS.includes(a);
-        });
-        renderAttrSections();
-        renderItemList(searchInput.value);
-        console.log('✅ Loaded', items.length, 'items');
+document.getElementById('attrPanelToggle').addEventListener('click', () => {
+  const body  = document.getElementById('attrPanelBody');
+  const arrow = document.getElementById('attrPanelArrow');
+  const open  = body.style.display === 'none';
+  body.style.display  = open ? 'flex' : 'none';
+  arrow.textContent   = open ? '▾' : '▸';
+});
+
+document.getElementById('selectCore').addEventListener('click', () => {
+  const core = getCoreAttrs();
+  headers.forEach(h => { attrChecked[h] = core.has(h); });
+  renderAttrSections();
+  const pk = getPrimaryKey();
+  if (selectedItemNo) renderDetail(items.find(it => it[pk] === selectedItemNo));
+});
+document.getElementById('selectNone').addEventListener('click', () => {
+  headers.forEach(h => { attrChecked[h] = false; });
+  renderAttrSections();
+  const pk = getPrimaryKey();
+  if (selectedItemNo) renderDetail(items.find(it => it[pk] === selectedItemNo));
+});
+$editCurrentItem.addEventListener('click', () => {
+  const pk = getPrimaryKey();
+  const item = items.find(it => it[pk] === selectedItemNo);
+  if (item) openEditModal(item);
+});
+$addNewItem.addEventListener('click', openNewItemModal);
+$saveFile.addEventListener('click', saveToFile);
+
+document.getElementById('modalClose').addEventListener('click', closeEditModal);
+document.getElementById('modalCancel').addEventListener('click', closeEditModal);
+document.getElementById('modalConfirm').addEventListener('click', applyEditChanges);
+$editModal.addEventListener('click', e => { if (e.target === $editModal) closeEditModal(); });
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && $editModal.style.display !== 'none') closeEditModal();
+});
+
+// ─────────────────────────────────────────
+//  Tab switch
+// ─────────────────────────────────────────
+function hasUnsavedChanges() {
+  return items.some(it => it._dirty || it._isNew);
+}
+
+function switchTab(newTab) {
+  if (newTab === activeTab) return;
+
+  if (hasUnsavedChanges()) {
+    const name = activeTab === 'character' ? '怪物' : '物品';
+    if (!confirm(name + '有未保存修改，确定要切换吗？')) return;
+  }
+
+  saveCurrentToTabState();
+  activeTab = newTab;
+  loadFromTabState();
+
+  document.getElementById('tabItem').classList.toggle('active', newTab === 'item');
+  document.getElementById('tabChar').classList.toggle('active', newTab === 'character');
+
+  $currentFilePath.textContent = currentFilePath || '未加载文件';
+  $currentFilePath.title = currentFilePath;
+  updateTabLabels();
+  renderItemList();
+  renderAttrSections();
+
+  const pk = getPrimaryKey();
+  if (selectedItemNo) {
+    const item = items.find(it => it[pk] === selectedItemNo);
+    if (item) renderDetail(item);
+    $editCurrentItem.disabled = false;
+  } else {
+    $detailArea.innerHTML = '<div class="empty-state">' + (newTab === 'character' ? '请在左侧选择怪物' : '请在左侧选择物品') + '</div>';
+    $editCurrentItem.disabled = true;
+  }
+
+  $addNewItem.disabled = headers.length === 0;
+  updateUnsavedStatus();
+}
+
+// ─────────────────────────────────────────
+//  Init
+// ─────────────────────────────────────────
+async function loadFromServer() {
+  const url = activeTab === 'character' ? 'CharacterInfo.txt' : 'ItemInfo.txt';
+  const useGbk = activeTab === 'character';
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const buf = await res.arrayBuffer();
+    let text;
+    if (useGbk) {
+      try {
+        text = new TextDecoder('gbk').decode(buf);
+      } catch (_) {
+        text = new TextDecoder('utf-8').decode(buf);
       }
+    } else {
+      text = new TextDecoder('utf-8').decode(buf);
+    }
+    loadFromContent(text, url + ' (服务器)');
+  } catch (e) {
+    console.warn('Server load failed:', e);
+  }
+}
 
-      function loadFromServer() {
-        return fetch('ItemInfo.txt').then(r => r.text()).then(loadFromContent);
+function doLoadFile(content, path) {
+  if (content) loadFromContent(content, path);
+}
+
+function initLoader() {
+  document.getElementById('tabItem').addEventListener('click', () => switchTab('item'));
+  document.getElementById('tabChar').addEventListener('click', () => switchTab('character'));
+
+  if (window.__TAURI__) {
+    document.getElementById('fileInput').style.display = 'none';
+    document.getElementById('loadFromServer').style.display = 'none';
+    const btn = document.getElementById('tauriSelectFile');
+    btn.style.display = '';
+    btn.textContent = '📂 选择文件';
+    btn.addEventListener('click', async () => {
+      try {
+        const cmd = activeTab === 'character' ? 'read_character_file' : 'read_item_file';
+        const res = await window.__TAURI__.core.invoke(cmd);
+        doLoadFile(res.content, res.path);
+      } catch (e) {
+        alert('❌ 读取失败：' + e);
       }
+    });
+  } else {
+    document.getElementById('tauriSelectFile').style.display = 'none';
+    document.getElementById('fileInput').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => doLoadFile(ev.target.result, file.name);
+      reader.readAsText(file, 'gbk');
+    });
+    document.getElementById('loadFromServer').addEventListener('click', loadFromServer);
+    switchTab('character');
+    loadFromServer();
+  }
+}
 
-      document.getElementById('loadFromServer').addEventListener('click', () => {
-        loadFromServer().catch(() => alert('Failed to load. Run serve_item_browser.py first.'));
-      });
-
-      fileInput.addEventListener('change', (e) => {
-        const f = e.target.files[0];
-        if (!f) return;
-        const reader = new FileReader();
-        reader.onload = (ev) => loadFromContent(ev.target.result);
-        reader.readAsText(f);
-      });
-
-      function initLoader() {
-        if (window.__TAURI__) {
-          // Desktop mode: use native file dialog via Tauri invoke
-          document.getElementById('fileInput').style.display = 'none';
-          document.getElementById('loadFromServer').style.display = 'none';
-          document.getElementById('loadTip').style.display = 'none';
-          const btn = document.getElementById('tauriSelectFile');
-          btn.style.display = '';
-          btn.addEventListener('click', () => {
-            window.__TAURI__.core.invoke('read_item_file')
-              .then(content => { if (content) loadFromContent(content); })
-              .catch(err => alert('Failed to read file: ' + err));
-          });
-        } else {
-          // Browser / server mode: try auto-load from server
-          loadFromServer().catch(() => {});
-        }
-      }
-
-      initLoader();
-    })();
-  </script>
+initLoader();
+</script>
 </body>
 </html>

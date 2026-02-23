@@ -1,0 +1,58 @@
+# ===== Rust / Tauri =====
+src-tauri/target/
+src-tauri/gen/
+Cargo.lock
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.env
+.venv
+venv/
+env/
+
+# ===== Node / Frontend =====
+node_modules/
+dist/
+.next/
+.nuxt/
+.output/
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== IDE =====
+.vscode/
+.idea/
+*.suo
+*.user
+
+# ===== Backup files =====
+*-backup.*
+*.bak
+*.orig
+
+# ===== Build output =====
+*.exe
+*.msi
+*.dmg
+*.deb
+*.AppImage
+ItemBrowser.exe
+
+# ===== Sensitive / large data files =====
+ItemInfo.txt
+ItemInfo-backup.txt
+ItemEffect-backup.lua
+ADDED_ItemInfo.txt
+ADDED_ItemEffect.lua

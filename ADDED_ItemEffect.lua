@@ -1,4 +1,4 @@
--- Insert before line: ------------------潮声快乐器Lv1
+﻿-- Insert before line: ------------------潮声快乐器Lv1
 
 -- 1-5级小叶子的化妆盒一千连
 function ItemUse_10801q(role, Item)

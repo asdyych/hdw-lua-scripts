@@ -1,5 +1,6 @@
 ---
+description: 
 alwaysApply: true
 ---
 
-本服务全部采用中文的描述和文案,且要考虑GBK的转换
+本项目的文件全部采用中文的描述和文案,注意保持GBK的编码

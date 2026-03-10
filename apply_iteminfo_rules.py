@@ -8,24 +8,30 @@ NAME, TYPE, LEVEL = 1, 10, 24
 MIN_ATK, MAX_ATK, DEF_CONST, PHYS_RESIST, REMARK = 60, 61, 62, 73, 94
 
 WEAPON_TYPES = set(str(x) for x in range(1, 10))
-WEAPON_ARMOR_TYPES = WEAPON_TYPES | {'11', '20', '22', '26', '27', '28', '29', '30'}
+# 1-9 weapon, 11/20/22/23/24/26/27/28/29/30 armor (23=gloves, 24=boots)
+WEAPON_ARMOR_TYPES = WEAPON_TYPES | {'11', '20', '22', '23', '24', '26', '27', '28', '29', '30'}
 
 EXCLUDE_NAMES = {'\u9ed1\u9f99\u4e4b\u5fc3', '\u9ed1\u9f99\u4e4b\u9b42', '\u9ed1\u9f99\u4e4b\u77b3'}
 
-PREFIXES = ('\u8bc5\u5492\u4e4b', '\u5e7d\u7075', '\u8ff7\u4e4b', '\u6b7b\u795e')
+# startswith: curse/phantom/mystery/death + ghost/undead/wraith/curse-mark/shadow
+# + 濠电姷鏁告慨鎾儉婢舵劕绾ч幖瀛樻尭娴滅偓淇婇妶鍕妽闁告瑥绻橀弻锝夊箣閿濆棭妫勭紒鐐劤椤兘寮婚敐鍛傜喓绱掑Ο闀愭埛闂備浇妗ㄧ粈渚€顢栭崶顒€绠熼柟闂寸缁秹鏌涢鐘茬仼缂佷緤绠撳Λ鍛搭敃閵忊€愁槱缂備礁顑嗙敮鈥愁嚕閺屻儱绠瑰ù锝呮贡閸欏棝姊虹紒妯荤闁稿﹤婀遍埀顒佺啲閹凤拷/闂傚倸鍊搁崐鎼佸磹閹间礁纾瑰瀣捣閻棗銆掑锝呬壕濡ょ姷鍋涢ˇ鐢稿极瀹ュ绀嬫い鎰╁灮娴滀即鏌ｆ惔锛勭暛闁稿骸宕叅闁挎洖鍊稿Ч鍙夌節婵犲倸顏х紒璇叉閺屾洟宕煎┑鍥ф闂侀潻绲界紞濠囧蓟濞戙垹绠ｉ柣妯荤ゴ閺嬪懘姊洪崫鍕潶闁告梹鍨块獮鍐Χ婢跺﹦锛滃┑鐐村灦閿曗晜瀵奸敓锟�/闂傚倸鍊搁崐鎼佸磹妞嬪海鐭嗗〒姘ｅ亾妤犵偞鐗犻、鏇氱秴闁搞儺鍓﹂弫鍐煥閺囨浜鹃梺姹囧€楅崑鎾舵崲濞戙垹绠ｆ繛鍡楃箳娴犲ジ鏌熼崗鍏肩稇闁挎洦浜濠氭晬閸曨亝鍕冮柣鐘叉处瑜板啯鎱ㄦ惔锝囩＝濞达絽鎼宀勬煕閵娿儳鍩ｇ€殿喖顭锋俊鎼佸煛閸屾矮绨介梻浣呵归張顒傜矙閹达富鏁傞柨鐕傛嫹/闂傚倸鍊搁崐鎼佸磹妞嬪海鐭嗗〒姘ｅ亾妤犵偞鐗犻、鏇氱秴闁搞儺鍓﹂弫鍐煥閺囨浜鹃梺姹囧€濈粻鏍蓟閿濆憘鐔封枎閹勵唲缂傚倸鍊风拋鏌ュ疾閻樺樊鍤曢柛顐ｆ礀闁卞洦鎱ㄥ鍡楀箺闁绘繃娲熷铏圭矙鐠恒劎顔夌紓渚囧枟閹瑰洤顕ｆ繝姘╅柍鍝勫€告禍鐐烘⒑缁嬫寧婀扮紒瀣灴椤㈡棃鏁撻敓锟�/濠电姷鏁告慨鎾儉婢舵劕绾ч幖瀛樻尭娴滅偓淇婇妶鍕妽闁告瑥绻橀弻锝夊箣閿濆棭妫勭紒鐐劤椤兘寮婚敐澶婃闁圭ǹ瀛╅崕鎾绘⒑閹肩偛濡界紒璇插暣婵＄敻宕熼姘敤闂侀潧臎閸涱垰甯掗梻鍌欒兌鏋紒缁樺灩閸掓帡骞樼拠鑼舵憰闂侀潧艌閺呮粓宕戦崱娑欑厱閻忕偛澧介埥澶嬨亜韫囥儲瀚� for robe/staff
+PREFIXES = ('\u8bc5\u5492\u4e4b', '\u5e7b\u7075', '\u8ff7\u4e4b', '\u6b7b\u795e',
+            '\u5e7d\u7075', '\u6b7b\u7075', '\u4ea1\u7075', '\u5492\u7eb9', '\u6697\u5f71',
+            '\u5e7b\u5492', '\u5492\u6587', '\u8ff7\u5492', '\u8ff7\u6cd5', '\u5e7b\u6cd5', '\u5492\u706b', '\u8ff7\u5e7b', '\u7834\u9b54', '\u8ff7\u96fe')
 
 BATCH4_NAMES = {
     '\u8bc5\u5492\u4e4b\u7075\u94a2\u7532', '\u5492\u7eb9\u91cd\u5251', '\u5492\u7eb9\u523a\u5251',
     '\u5492\u7eb9\u7d27\u8eab\u8863', '\u8bc5\u5492\u4e4b\u543b', '\u5492\u672f\u4e4b\u6756',
-    '\u8ff7\u6cd5\u4e4b\u6756', '\u7b26\u6587\u5916\u8863', '\u5e7d\u6cd5\u4e4b\u8884',
-    '\u5492\u6587\u6cd5\u6756', '\u5e7d\u5316\u4e4b\u6756', '\u8ff7\u5492\u6cd5\u6756',
-    '\u5492\u6587\u4e4b\u8884', '\u5e7d\u5492\u4e4b\u8884', '\u8ff7\u5492\u6cd5\u8884',
-    '\u8bc5\u5492\u4e4b\u523a', '\u8ff7\u5e7d\u4e4b\u523a', '\u5492\u706b\u6597\u84df', '\u8ff7\u5e7d\u6597\u84df',
+    '\u8ff7\u6cd5\u4e4b\u6756', '\u7b26\u6587\u5916\u8863', '\u5e7b\u6cd5\u4e4b\u8884',
+    '\u5492\u6587\u6cd5\u6756', '\u5e7b\u5316\u4e4b\u6756', '\u8ff7\u5492\u6cd5\u6756',
+    '\u5492\u6587\u4e4b\u8884', '\u5e7b\u5492\u4e4b\u8884', '\u8ff7\u5492\u6cd5\u8884',
+    '\u8bc5\u5492\u4e4b\u523a', '\u8ff7\u5e7b\u4e4b\u523a', '\u5492\u706b\u6597\u84df', '\u8ff7\u5e7b\u6597\u84df',
+    '\u6b66\u58eb\u4e4b\u8bc5\u5492\u7eb9\u8eab',
 }
 BATCH4_PATTERNS = (
-    '\u5e7d\u7075\u6218\u7532\u624b\u5957', '\u5e7d\u7075\u6218\u7532\u9774', '\u5e7d\u7075\u62a4\u624b',
-    '\u5e7d\u7075\u62a4\u817f', '\u5e7d\u5492\u624b\u5957', '\u5e7d\u6cd5\u624b\u5957',
-    '\u5e7d\u5492\u9774', '\u5e7d\u6cd5\u9774', '\u5e7d\u7075\u76ae\u624b\u5957',
+    '\u5e7b\u7075\u6218\u7532\u624b\u5957', '\u5e7b\u7075\u6218\u7532\u9774', '\u5e7b\u7075\u62a4\u624b',
+    '\u5e7b\u7075\u62a4\u817f', '\u5e7b\u5492\u624b\u5957', '\u5e7b\u6cd5\u624b\u5957',
+    '\u5e7b\u5492\u9774', '\u5e7b\u6cd5\u9774', '\u5e7b\u7075\u76ae\u624b\u5957', '\u5e7b\u7075\u62ab\u98ce',
 )
 BATCH3_NAMES = (
     '\u9ed1\u6697\u4f7f\u8005', '\u54c8\u8fea\u65af\u4e4b\u6cea', '\u4fee\u9f99\u4e4b\u6094\u609f',
@@ -37,7 +43,8 @@ BATCH3_NAMES = (
 
 def norm_name(s):
     s = re.sub(r'\(A\)|\(B\)|\(\u9177\)|\u00b7\u6539', '', s)
-    s = re.sub(r'^(\u6dc4\u6ce5|\u70c8\u7130|\u5bd2\u51b0)\u5c01\u5370\u7684', '', s)
+    s = re.sub(r'^\[?\u9177\]?', '', s)
+    s = re.sub(r'^(\u6dc4\u6ce5|\u70c8\u7130|\u5bd2\u51b0|\u4e0d\u6b7b|\u708e\u98d2)\u5c01\u5370\u7684', '', s)
     s = re.sub(r'^\u5f3a\u5316-', '', s)
     return s.strip()
 
@@ -66,12 +73,17 @@ def need_0_resist_def(row):
 
 def need_prefix(row):
     name = row[NAME]
+    base = norm_name(name)
     t = row[TYPE]
     if t in ('31', '34', '41'):
         return False
     if t not in WEAPON_ARMOR_TYPES:
         return False
-    return any(name.startswith(p) for p in PREFIXES)
+    if any(base.startswith(p) for p in PREFIXES):
+        return True
+    if '\u8bc5\u5492' in base:
+        return True
+    return False
 
 
 def need_batch3(row):

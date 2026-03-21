@@ -1,6 +1,7 @@
 ---
-description: 
+description:
 alwaysApply: true
 ---
 
-本项目的文件全部采用中文的描述和文案,注意保持GBK的编码
+- GBK 仅在读写 ItemInfo.txt 和 CharacterInfo.txt 时使用
+- 其余所有代码文件（HTML、JS、Python、Rust、配置文件等）一律使用 UTF-8 编码

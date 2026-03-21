@@ -7,7 +7,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Microsoft YaHei',sans-serif;background:#1a1a2e;color:#e0e0e0;height:100vh;display:flex;flex-direction:column;overflow:hidden}
 
-/* ── Header ─────────────────────────────────────── */
+/* —— Header ——————————————————————————————————————— */
 .app-header{
   display:flex;align-items:center;gap:12px;flex-wrap:wrap;
   padding:8px 14px;background:#16213e;border-bottom:1px solid #0f3460;
@@ -29,7 +29,7 @@ body{font-family:'Microsoft YaHei',sans-serif;background:#1a1a2e;color:#e0e0e0;h
 .save-bar{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .unsaved-dot{font-size:12px;color:#e67e22;white-space:nowrap}
 
-/* ── Buttons ─────────────────────────────────────── */
+/* —— Buttons ——————————————————————————————————————— */
 .btn{
   padding:4px 10px;border:none;border-radius:4px;cursor:pointer;
   font-size:13px;transition:opacity .15s;white-space:nowrap;
@@ -50,7 +50,7 @@ input[type=file]::file-selector-button{
   padding:2px 8px;cursor:pointer;font-size:12px;margin-right:6px;
 }
 
-/* ── Main layout ─────────────────────────────────── */
+/* —— Main layout ——————————————————————————————————— */
 .main-layout{
   display:grid;grid-template-columns:300px 1fr;
   gap:10px;padding:10px;flex:1;overflow:hidden;
@@ -63,7 +63,7 @@ input[type=file]::file-selector-button{
 .panel-title{font-size:14px;font-weight:bold;color:#e94560;flex:1}
 .panel-title-sm{font-size:13px;font-weight:bold;color:#e94560;flex-shrink:0;margin-top:4px}
 
-/* ── Search ──────────────────────────────────────── */
+/* —— Search ———————————————————————————————————————— */
 .search-box{
   width:100%;padding:6px 10px;background:#0d1b2a;border:1px solid #0f3460;
   border-radius:4px;color:#e0e0e0;font-size:13px;flex-shrink:0;
@@ -71,7 +71,7 @@ input[type=file]::file-selector-button{
 .search-box:focus{outline:none;border-color:#e94560}
 .search-box::placeholder{color:#555}
 
-/* ── Item list ───────────────────────────────────── */
+/* —— Item list ————————————————————————————————————— */
 .item-list{overflow-y:auto;flex:1}
 .pagination{
   display:flex;align-items:center;justify-content:space-between;
@@ -99,10 +99,10 @@ input[type=file]::file-selector-button{
   padding:1px 4px;flex-shrink:0;
 }
 
-/* ── Right panel ─────────────────────────────────── */
+/* —— Right panel ——————————————————————————————————— */
 .right-scroll{overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:10px}
 
-/* ── Detail grid ─────────────────────────────────── */
+/* —— Detail grid ——————————————————————————————————— */
 .detail-header{margin-bottom:4px}
 .item-full-name{font-size:15px;font-weight:bold;color:#e0e0e0;margin-bottom:4px}
 .item-meta{font-size:12px;color:#7f8c8d}
@@ -121,7 +121,7 @@ input[type=file]::file-selector-button{
 .attr-val.negative{color:#e74c3c}
 .empty-state{color:#555;font-size:13px;padding:20px;text-align:center}
 
-/* ── Attribute selector ──────────────────────────── */
+/* —— Attribute selector ———————————————————————————— */
 .attr-section{border:1px solid #0f3460;border-radius:4px;overflow:hidden;flex-shrink:0}
 .attr-section-title{
   display:flex;align-items:center;justify-content:space-between;
@@ -137,7 +137,7 @@ input[type=file]::file-selector-button{
 .attr-chip:hover{background:#0f3460}
 .attr-chip.checked{background:#e94560;border-color:#e94560;color:#fff}
 
-/* ── Modal ───────────────────────────────────────── */
+/* —— Modal ————————————————————————————————————————— */
 .modal-overlay{
   position:fixed;inset:0;background:#000a;z-index:100;
   /* align-items:flex-start avoids vertical-centering cutting off tall modals */
@@ -252,29 +252,29 @@ input[type=file]::file-selector-button{
 </head>
 <body>
 
-<!-- ── App Header ───────────────────────── -->
+<!-- —— App Header ————————————————————————— -->
 <div class="app-header">
   <div class="app-title">数据编辑器</div>
   <div class="tab-bar">
     <button class="tab-btn active" id="tabItem" type="button">物品</button>
-    <button class="tab-btn" id="tabChar" type="button">怪物</button>
+    <button class="tab-btn" id="tabChar" type="button">角色</button>
   </div>
 
   <div class="file-bar" id="loadPanel">
     <span class="file-path" id="currentFilePath">未加载文件</span>
-    <button class="btn btn-primary" id="tauriSelectFile" style="display:none">📂 选择文件</button>
+    <button class="btn btn-primary" id="tauriSelectFile" style="display:none">馃搨 选择文件</button>
     <input type="file" id="fileInput" accept=".txt" />
     <button class="btn btn-ghost btn-sm" id="loadFromServer">从服务器加载</button>
   </div>
 
   <div class="save-bar">
-    <button class="btn btn-success" id="addNewItem" disabled>＋ 新增物品</button>
-    <button class="btn btn-warn" id="saveFile" disabled>💾 保存文件</button>
+    <button class="btn btn-success" id="addNewItem" disabled>➕ 新增物品</button>
+    <button class="btn btn-warn" id="saveFile" disabled>馃捑 保存文件</button>
     <span class="unsaved-dot" id="unsavedIndicator"></span>
   </div>
 </div>
 
-<!-- ── Main Layout ──────────────────────── -->
+<!-- —— Main Layout ———————————————————————— -->
 <div class="main-layout">
 
   <!-- Left: list -->
@@ -282,7 +282,7 @@ input[type=file]::file-selector-button{
     <div class="panel-header">
       <span class="panel-title" id="listPanelTitle">物品列表</span>
     </div>
-    <input type="text" class="search-box" id="searchInput" placeholder="按编号或名称搜索…" />
+    <input type="text" class="search-box" id="searchInput" placeholder="按编号或名称搜索..." />
     <div class="item-list" id="itemList"><div class="empty-state">尚未加载数据</div></div>
     <div class="pagination" id="pagination"></div>
   </div>
@@ -291,7 +291,8 @@ input[type=file]::file-selector-button{
   <div class="panel">
     <div class="panel-header" style="flex-shrink:0">
       <span class="panel-title" id="detailPanelTitle">物品详情</span>
-      <button class="btn btn-ghost btn-sm" id="editCurrentItem" disabled>✏️ 编辑</button>
+      <button class="btn btn-success btn-sm" id="saveDetail" disabled title="Ctrl+S">Save</button>
+      <button class="btn btn-ghost btn-sm" id="editCurrentItem" disabled title="Full edit modal">Full</button>
       <button class="btn btn-ghost btn-sm" id="selectCore">核心属性</button>
       <button class="btn btn-ghost btn-sm" id="selectNone">清空</button>
     </div>
@@ -301,22 +302,22 @@ input[type=file]::file-selector-button{
 
       <div class="panel-header" style="margin-top:4px;cursor:pointer" id="attrPanelToggle">
         <span class="panel-title-sm">显示属性</span>
-        <span id="attrPanelArrow" style="font-size:12px;color:#7f8c8d;margin-left:4px">▸</span>
+        <span id="attrPanelArrow" style="font-size:12px;color:#7f8c8d;margin-left:4px">▼</span>
       </div>
       <div id="attrPanelBody" style="display:none;flex-direction:column;gap:8px">
-        <input type="text" class="search-box" id="attrSearch" placeholder="筛选属性名…" />
+        <input type="text" class="search-box" id="attrSearch" placeholder="筛选属性名..." />
         <div id="attrSections"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ── Edit Modal ───────────────────────── -->
+<!-- —— Edit Modal ————————————————————————— -->
 <div class="modal-overlay" id="editModal" style="display:none">
   <div class="modal">
     <div class="modal-header">
       <h2 id="modalTitle">编辑物品</h2>
-      <button class="modal-close" id="modalClose">×</button>
+      <button class="modal-close" id="modalClose">脳</button>
     </div>
     <div class="modal-body">
       <div class="edit-shell">
@@ -325,7 +326,7 @@ input[type=file]::file-selector-button{
             <button class="seg-btn active" id="editModeSelected" type="button">已选属性</button>
             <button class="seg-btn" id="editModeAll" type="button">全部属性</button>
           </div>
-          <input class="edit-search" id="editSearch" placeholder="搜索字段（支持中文名/原始字段名）…" />
+          <input class="edit-search" id="editSearch" placeholder="搜索字段（支持中文名/原始字段名）..." />
           <span class="edit-hint" id="editStatusHint">已选属性优先显示</span>
         </div>
         <div class="edit-content">
@@ -335,7 +336,7 @@ input[type=file]::file-selector-button{
       </div>
     </div>
     <div class="modal-footer">
-      <span class="modal-tip">✏️ 修改仅在内存中生效，需点击"保存文件"写入磁盘</span>
+      <span class="modal-tip">修改仅在内存中生效，需点击"保存文件"写入磁盘</span>
       <div class="modal-actions">
         <button class="btn btn-ghost" id="modalCancel">取消</button>
         <button class="btn btn-accent" id="modalConfirm">确认修改</button>
@@ -345,9 +346,9 @@ input[type=file]::file-selector-button{
 </div>
 
 <script>
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 //  Constants
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 const CORE_ATTRS = new Set([
   '编号','Name','ICON','类型','价格','角色等级','职业',
   'Str常数加成','Agi常数加成','Dex常数加成','Con常数加成','Sta常数加成','Luk常数加成',
@@ -357,7 +358,7 @@ const CORE_ATTRS = new Set([
   'flee常数加成','hit常数加成','crt常数加成','mf常数加成',
   '攻击频率常数加成','攻击距离常数加成',
   'hrec常数加成','srec常数加成','mspd常数加成',
-  // 战斗系数默认勾选（攻速在武器上常用）
+  // combat coefficient defaults (attack speed common on weapons)
   '最小攻击力系数加成','最大攻击力系数加成','防御系数加成',
   'Mxhp系数加成','Mxsp系数加成',
   'flee系数加成','hit系数加成','crt系数加成','mf系数加成',
@@ -370,14 +371,14 @@ const CORE_ATTRS = new Set([
 const ATTR_GROUPS = {
   '基础信息':['编号','Name','ICON','掉落显示','类型','价格','体形','角色等级','职业','角色称号','角色名声'],
   '装备位置':['道具可装备位置','道具装备所替换位置','道具拾取进入位置判断'],
-  '战斗常数':[
+  '战斗常数加成':[
     '最小攻击力常数加成','最大攻击力常数加成','防御常数加成',
     'Mxhp常数加成','Mxsp常数加成',
     'flee常数加成','hit常数加成','crt常数加成','mf常数加成',
     '攻击频率常数加成','攻击距离常数加成',
     'hrec常数加成','srec常数加成','mspd常数加成','col常数加成',
   ],
-  '战斗系数':[
+  '战斗系数加成':[
     '最小攻击力系数加成','最大攻击力系数加成','防御系数加成',
     'Mxhp系数加成','Mxsp系数加成',
     'flee系数加成','hit系数加成','crt系数加成','mf系数加成',
@@ -405,7 +406,7 @@ const CHAR_ATTR_GROUPS = {
   '基础':['ID'],
   '战斗':['lv','mxhp','hp','mxsp','sp','mnatk','mxatk','resist','def','hit','flee','crt','mf'],
   '属性':['str','agi','dex','con','sta','luk'],
-  '回复':['hrec','srec','aspd','adis','chase_adis','mspd','col'],
+  '恢复':['hrec','srec','aspd','adis','chase_adis','mspd','col'],
   '成长':['job','exp','nexp','fame','ap','tp','gd'],
   '其他':['title','guild','left_rad','light','mobexp','getexp','vision','noise'],
 };
@@ -414,44 +415,44 @@ const CHAR_ATTR_GROUPS = {
 const CHAR_DISPLAY_NAMES = {
   'ID':'ID','lv':'等级','mxhp':'最大HP','hp':'当前HP','mxsp':'最大SP','sp':'当前SP',
   'mnatk':'最小攻击','mxatk':'最大攻击','resist':'抗性','def':'防御',
-  'hit':'命中','flee':'回避','crt':'暴击','mf':'魔法格',
+  'hit':'命中','flee':'回避','crt':'暴击','mf':'魔法力',
   'str':'力量','agi':'敏捷','dex':'专注','con':'体质','sta':'精神','luk':'幸运',
-  'hrec':'HP回复','srec':'SP回复','aspd':'攻速','adis':'攻距','mspd':'移速','col':'采集',
+  'hrec':'HP恢复','srec':'SP恢复','aspd':'攻速','adis':'攻距','mspd':'移速','col':'采集',
   'job':'职业','exp':'经验','nexp':'下级经验','fame':'名声','title':'称号','guild':'公会',
 };
 
 // Groups expanded by default in edit modal
-const EDIT_EXPANDED = new Set(['基础信息','战斗常数','属性常数','描述']);
+const EDIT_EXPANDED = new Set(['基础信息','战斗常数加成','属性常数','描述']);
 
-// ── Display name translations ─────────────────────
+// —— Display name translations —————————————————————
 const DISPLAY_NAMES = {
   'Name'       : '名称',
   'ICON'       : '图标ID',
   // Stats
-  'Str常数加成' : '力量(常数)', 'Str系数加成' : '力量(系数)',
-  'Agi常数加成' : '敏捷(常数)', 'Agi系数加成' : '敏捷(系数)',
-  'Dex常数加成' : '专注(常数)', 'Dex系数加成' : '专注(系数)',
-  'Con常数加成' : '体质(常数)', 'Con系数加成' : '体质(系数)',
-  'Sta常数加成' : '精神(常数)', 'Sta系数加成' : '精神(系数)',
-  'Luk常数加成' : '幸运(常数)', 'Luk系数加成' : '幸运(系数)',
+  'Str常数加成' : '力量', 'Str系数加成' : '力量(系数)',
+  'Agi常数加成' : '敏捷', 'Agi系数加成' : '敏捷(系数)',
+  'Dex常数加成' : '专注', 'Dex系数加成' : '专注(系数)',
+  'Con常数加成' : '体质', 'Con系数加成' : '体质(系数)',
+  'Sta常数加成' : '精神', 'Sta系数加成' : '精神(系数)',
+  'Luk常数加成' : '幸运', 'Luk系数加成' : '幸运(系数)',
   // HP / SP
-  'Mxhp常数加成': '最大HP(常数)', 'Mxhp系数加成': '最大HP(系数)',
-  'Mxsp常数加成': '最大SP(常数)', 'Mxsp系数加成': '最大SP(系数)',
+  'Mxhp常数加成': '最大HP', 'Mxhp系数加成': '最大HP(系数)',
+  'Mxsp常数加成': '最大SP', 'Mxsp系数加成': '最大SP(系数)',
   // Combat abbreviations
-  'flee常数加成' : '回避(常数)',    'flee系数加成' : '回避(系数)',
-  'hit常数加成'  : '命中(常数)',    'hit系数加成'  : '命中(系数)',
-  'crt常数加成'  : '暴击(常数)',    'crt系数加成'  : '暴击(系数)',
-  'mf常数加成'   : '魔法格(常数)',  'mf系数加成'   : '魔法格(系数)',
-  'hrec常数加成' : 'HP回复(常数)',  'hrec系数加成' : 'HP回复(系数)',
-  'srec常数加成' : 'SP回复(常数)',  'srec系数加成' : 'SP回复(系数)',
-  'mspd常数加成' : '移动速度(常数)','mspd系数加成' : '移动速度(系数)',
-  'col常数加成'  : '采集(常数)',    'col系数加成'  : '采集(系数)',
+  'flee常数加成' : '回避',    'flee系数加成' : '回避(系数)',
+  'hit常数加成'  : '命中',    'hit系数加成'  : '命中(系数)',
+  'crt常数加成'  : '暴击',    'crt系数加成'  : '暴击(系数)',
+  'mf常数加成'   : '魔法力',  'mf系数加成'   : '魔法力(系数)',
+  'hrec常数加成' : 'HP恢复',  'hrec系数加成' : 'HP恢复(系数)',
+  'srec常数加成' : 'SP恢复',  'srec系数加成' : 'SP恢复(系数)',
+  'mspd常数加成' : '移动速度','mspd系数加成' : '移动速度(系数)',
+  'col常数加成'  : '采集',    'col系数加成'  : '采集(系数)',
   // Attack
-  '最小攻击力常数加成': '最小攻击(常数)', '最小攻击力系数加成': '最小攻击(系数)',
-  '最大攻击力常数加成': '最大攻击(常数)', '最大攻击力系数加成': '最大攻击(系数)',
-  '防御常数加成'      : '防御(常数)',     '防御系数加成'      : '防御(系数)',
-  '攻击频率常数加成'  : '攻速(常数)',     '攻击频率系数加成'  : '攻速(系数)',
-  '攻击距离常数加成'  : '攻距(常数)',     '攻击距离系数加成'  : '攻距(系数)',
+  '最小攻击力常数加成': '最小攻击', '最小攻击力系数加成': '最小攻击(系数)',
+  '最大攻击力常数加成': '最大攻击', '最大攻击力系数加成': '最大攻击(系数)',
+  '防御常数加成'      : '防御',     '防御系数加成'      : '防御(系数)',
+  '攻击频率常数加成'  : '攻速',     '攻击频率系数加成'  : '攻速(系数)',
+  '攻击距离常数加成'  : '攻距',     '攻击距离系数加成'  : '攻距(系数)',
 };
 
 function displayName(key) {
@@ -464,9 +465,29 @@ function getNameKey() { return activeTab === 'character' ? nameKeyColumn : 'Name
 function getAttrGroups() { return activeTab === 'character' ? CHAR_ATTR_GROUPS : ATTR_GROUPS; }
 function getCoreAttrs() { return activeTab === 'character' ? CHAR_CORE_ATTRS : CORE_ATTRS; }
 
-// ─────────────────────────────────────────
+/** Fields shown in inline edit panel: combat + core attributes */
+function getInlineEditFields() {
+  const attrGroups = getAttrGroups();
+  const keys = Object.keys(attrGroups);
+  const groupKeys = activeTab === 'character'
+    ? keys.slice(0, 5)
+    : [keys[0], keys[2], keys[3], keys[4], keys[5], keys[6], keys[9]].filter(Boolean);
+  const out = [];
+  const seen = new Set();
+  for (const g of groupKeys) {
+    const fields = attrGroups[g];
+    if (fields) {
+      for (const f of fields) {
+        if (headers.includes(f) && !seen.has(f)) { seen.add(f); out.push(f); }
+      }
+    }
+  }
+  return out;
+}
+
+// —————————————————————————————————————————
 //  State
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 let activeTab = 'item';
 let nameKeyColumn = ''; // for character: column 2 header, set after parse
 
@@ -518,9 +539,9 @@ function loadFromTabState() {
   nameKeyColumn = s.nameKeyColumn || '';
 }
 
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 //  DOM refs
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 const $itemList      = document.getElementById('itemList');
 const $searchInput   = document.getElementById('searchInput');
 const $detailArea    = document.getElementById('detailArea');
@@ -537,12 +558,13 @@ const $editStatusHint   = document.getElementById('editStatusHint');
 const $editCurrentItem = document.getElementById('editCurrentItem');
 const $addNewItem    = document.getElementById('addNewItem');
 const $saveFile      = document.getElementById('saveFile');
+const $saveDetail    = document.getElementById('saveDetail');
 const $unsaved       = document.getElementById('unsavedIndicator');
 const $currentFilePath = document.getElementById('currentFilePath');
 
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 //  Parse
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 function parseTsv(text, mode) {
   mode = mode || 'item';
   const isChar = mode === 'character';
@@ -582,9 +604,9 @@ function parseTsv(text, mode) {
   return { headers: hdrs, rows, rawLines: lines, nameKeyColumn: nameKey };
 }
 
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 //  Load
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 function loadFromContent(text, filePath) {
   const mode = activeTab;
   if (filePath !== undefined) {
@@ -606,7 +628,7 @@ function loadFromContent(text, filePath) {
 
   renderItemList();
   renderAttrSections();
-  const emptyMsg = mode === 'character' ? '请在左侧选择怪物' : '请在左侧选择物品';
+  const emptyMsg = mode === 'character' ? '请在左侧选择角色' : '请在左侧选择物品';
   $detailArea.innerHTML = '<div class="empty-state">' + emptyMsg + '</div>';
   $editCurrentItem.disabled = true;
   $addNewItem.disabled = false;
@@ -615,15 +637,15 @@ function loadFromContent(text, filePath) {
 }
 
 function updateTabLabels() {
-  document.getElementById('listPanelTitle').textContent = activeTab === 'character' ? '怪物列表' : '物品列表';
-  document.getElementById('detailPanelTitle').textContent = activeTab === 'character' ? '怪物详情' : '物品详情';
-  $searchInput.placeholder = activeTab === 'character' ? '按ID或名称搜索…' : '按编号或名称搜索…';
-  $addNewItem.textContent = activeTab === 'character' ? '＋ 新增怪物' : '＋ 新增物品';
+  document.getElementById('listPanelTitle').textContent = activeTab === 'character' ? '角色列表' : '物品列表';
+  document.getElementById('detailPanelTitle').textContent = activeTab === 'character' ? '角色详情' : '物品详情';
+  $searchInput.placeholder = activeTab === 'character' ? '按ID或名称搜索...' : '按编号或名称搜索...';
+  $addNewItem.textContent = activeTab === 'character' ? '➕ 新增角色' : '➕ 新增物品';
 }
 
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 //  Item list + pagination
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 function getFilteredItems() {
   const pk = getPrimaryKey();
   const nk = getNameKey();
@@ -648,13 +670,13 @@ function renderPagination(total, totalPages) {
   const atFirst = currentPage === 1;
   const atLast  = currentPage === totalPages;
   $pg.innerHTML = `
-    <span class="page-info">${start}–${end} / ${total} 项</span>
+    <span class="page-info">${start}~${end} / ${total} 条</span>
     <div class="page-btns">
-      <button class="btn btn-ghost btn-sm" id="pgFirst" ${atFirst?'disabled':''}>«</button>
+      <button class="btn btn-ghost btn-sm" id="pgFirst" ${atFirst?'disabled':''}>芦</button>
       <button class="btn btn-ghost btn-sm" id="pgPrev"  ${atFirst?'disabled':''}>‹</button>
       <span class="page-cur">${currentPage} / ${totalPages}</span>
-      <button class="btn btn-ghost btn-sm" id="pgNext"  ${atLast?'disabled':''}>›</button>
-      <button class="btn btn-ghost btn-sm" id="pgLast"  ${atLast?'disabled':''}>»</button>
+      <button class="btn btn-ghost btn-sm" id="pgNext"  ${atLast?'disabled':''}>‹</button>
+      <button class="btn btn-ghost btn-sm" id="pgLast"  ${atLast?'disabled':''}>末</button>
     </div>`;
   document.getElementById('pgFirst').addEventListener('click', () => { currentPage = 1; renderItemList(); });
   document.getElementById('pgPrev').addEventListener('click',  () => { if (currentPage > 1) { currentPage--; renderItemList(); } });
@@ -674,7 +696,7 @@ function renderItemList() {
 
   const emptyLabel = headers.length === 0
     ? '尚未加载数据'
-    : (activeTab === 'character' ? '无匹配怪物' : '无匹配物品');
+    : (activeTab === 'character' ? '无匹配角色' : '无匹配物品');
   if (!filtered.length) {
     $itemList.innerHTML = '<div class="empty-state">' + emptyLabel + '</div>';
     document.getElementById('pagination').innerHTML = '';
@@ -701,22 +723,22 @@ function renderItemList() {
   renderPagination(filtered.length, totalPages);
 }
 
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 //  Select item
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 function selectItem(no) {
   const pk = getPrimaryKey();
   selectedItemNo = no;
   renderItemList();
   const item = items.find(it => it[pk] === no);
   if (!item) return;
-  renderDetail(item);
+  renderDetailEditable(item);
   $editCurrentItem.disabled = false;
 }
 
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 //  Detail
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 function hasValue(val) {
   if (val === null || val === undefined) return false;
   const s = String(val).trim();
@@ -725,7 +747,7 @@ function hasValue(val) {
   return true;
 }
 
-/** Format value for display: 攻速→百分比, 范围→a~b */
+/** Format value for display: attack speed → percent, range → a~b */
 function formatDisplayValue(field, val) {
   const s = String(val).trim();
   const isAttackSpeed = field === '攻击频率常数加成' || field === '攻击频率系数加成';
@@ -746,7 +768,7 @@ function renderDetail(item) {
   const checkedHdrs = headers.filter(h => attrChecked[h]);
   const pairs = checkedHdrs.map(h => [h, item[h]]).filter(([, v]) => hasValue(v));
   if (!pairs.length) {
-    $detailArea.innerHTML = '<div class="empty-state">所选属性均无有效值</div>';
+    $detailArea.innerHTML = '<div class="empty-state">所选属性均无效</div>';
     return;
   }
   const cells = pairs.map(([h, v]) => {
@@ -771,9 +793,62 @@ function renderDetail(item) {
     <div class="attr-grid">${cells}</div>`;
 }
 
-// ─────────────────────────────────────────
+/** Inline editable panel: combat + core attrs, no modal needed */
+function renderDetailEditable(item) {
+  const fields = getInlineEditFields();
+  if (!fields.length) {
+    $detailArea.innerHTML = '<div class="empty-state">No editable fields</div>';
+    return;
+  }
+  const pk = getPrimaryKey();
+  const nk = getNameKey();
+  const meta = activeTab === 'character'
+    ? `Lv: ${item['lv']||'-'} &nbsp; HP: ${item['hp']||'-'}/${item['mxhp']||'-'} &nbsp; SP: ${item['sp']||'-'}/${item['mxsp']||'-'}`
+    : `Type: ${item['类型']||'-'} &nbsp; Price: ${item['价格']||'-'}`;
+
+  const LONG_FIELDS = new Set(['道具捆绑特效', '船耐久恢复', '描述（道具等级）', '备注']);
+  const cells = fields.map(f => {
+    const val = String(item[f] ?? '').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    const label = displayName(f);
+    const keyHint = f !== label ? `<div class="field-key" title="${f}">${f}</div>` : '';
+    if (LONG_FIELDS.has(f) || (f.length > 20 && val.length > 60)) {
+      return `<div class="field-box" style="grid-column:1/-1">
+        <label class="field-label" title="${f}">${label}</label>${keyHint}
+        <textarea class="field-textarea field-inline" data-field="${f}">${val}</textarea>
+      </div>`;
+    }
+    return `<div class="field-box">
+      <label class="field-label" title="${f}">${label}</label>${keyHint}
+      <input class="field-input field-inline" data-field="${f}" type="text" value="${val}">
+    </div>`;
+  }).join('');
+
+  $detailArea.innerHTML = `
+    <div class="detail-header">
+      <div class="item-full-name">[${item[pk]||'?'}] ${item[nk]||'(unnamed)'}</div>
+      <div class="item-meta">${meta}</div>
+    </div>
+    <div class="edit-fields" style="margin-top:8px">${cells}</div>`;
+
+  $detailArea.querySelectorAll('.field-inline').forEach(el => {
+    el.addEventListener('input', () => applyInlineEdit(el.dataset.field, el.value));
+    el.addEventListener('change', () => applyInlineEdit(el.dataset.field, el.value));
+  });
+}
+
+function applyInlineEdit(field, value) {
+  const pk = getPrimaryKey();
+  const item = items.find(it => it[pk] === selectedItemNo);
+  if (!item) return;
+  item[field] = value;
+  item._dirty = true;
+  updateUnsavedStatus();
+  renderItemList();
+}
+
+// —————————————————————————————————————————
 //  Attribute selector
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 function getGroupedHeaders() {
   const placed = new Set();
   const groups = {};
@@ -801,7 +876,7 @@ function renderAttrSections(filter) {
     }).join('');
     return `<div class="attr-section">
       <div class="attr-section-title" data-section="${gName}">
-        <span>${gName}</span><span>▾</span>
+        <span>${gName}</span><span>▼</span>
       </div>
       <div class="attr-section-chips" data-section-body="${gName}">${chips}</div>
     </div>`;
@@ -823,9 +898,9 @@ function renderAttrSections(filter) {
   });
 }
 
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 //  Edit modal
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 
 function uniq(arr) {
   const seen = new Set();
@@ -958,7 +1033,7 @@ function openEditModal(item) {
   setEditMode('selected');
   editActiveGroup = '已选属性';
   const isNew = item._isNew && !item._lineIdx;
-  const prefix = activeTab === 'character' ? (isNew ? '新增怪物' : '编辑怪物') : (isNew ? '新增物品' : '编辑物品');
+  const prefix = activeTab === 'character' ? (isNew ? '新增角色' : '编辑角色') : (isNew ? '新增物品' : '编辑物品');
   $modalTitle.textContent = isNew ? prefix : `${prefix}: [${item[pk]||'?'}] ${item[nk]||''}`;
 
   // Bind once (idempotent)
@@ -1012,9 +1087,9 @@ function applyEditChanges() {
   updateUnsavedStatus();
 }
 
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 //  New item
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 function openNewItemModal() {
   const pk = getPrimaryKey();
   const maxNo = items.reduce((m, it) => {
@@ -1028,9 +1103,9 @@ function openNewItemModal() {
   openEditModal(blank);
 }
 
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 //  Save
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 function itemToLine(item) {
   return headers.map(h => item[h] ?? '').join('\t');
 }
@@ -1064,9 +1139,9 @@ async function saveToFile() {
       items.forEach(it => { it._dirty = false; it._isNew = false; });
       updateUnsavedStatus();
       renderItemList();
-      alert('✅ 已保存到 ' + currentFilePath);
+      alert('✔ 已保存到 ' + currentFilePath);
     } catch (e) {
-      alert('❌ 保存失败：' + e);
+      alert('Save failed: ' + e);
     }
   } else {
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
@@ -1081,23 +1156,25 @@ async function saveToFile() {
   }
 }
 
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 //  Unsaved status
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 function updateUnsavedStatus() {
   const dirtyCount = items.filter(it => it._dirty || it._isNew).length;
   if (dirtyCount > 0) {
-    $unsaved.textContent = `● ${dirtyCount} 处未保存`;
+    $unsaved.textContent = `${dirtyCount} unsaved`;
     $saveFile.disabled = false;
+    if ($saveDetail) $saveDetail.disabled = false;
   } else {
     $unsaved.textContent = '';
     $saveFile.disabled = true;
+    if ($saveDetail) $saveDetail.disabled = true;
   }
 }
 
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 //  Event listeners
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 $searchInput.addEventListener('input', () => { currentPage = 1; renderItemList(); });
 $attrSearch.addEventListener('input', () => renderAttrSections());
 
@@ -1122,7 +1199,7 @@ document.getElementById('attrPanelToggle').addEventListener('click', () => {
   const arrow = document.getElementById('attrPanelArrow');
   const open  = body.style.display === 'none';
   body.style.display  = open ? 'flex' : 'none';
-  arrow.textContent   = open ? '▾' : '▸';
+  arrow.textContent   = open ? '▼' : '▼';
 });
 
 document.getElementById('selectCore').addEventListener('click', () => {
@@ -1130,13 +1207,13 @@ document.getElementById('selectCore').addEventListener('click', () => {
   headers.forEach(h => { attrChecked[h] = core.has(h); });
   renderAttrSections();
   const pk = getPrimaryKey();
-  if (selectedItemNo) renderDetail(items.find(it => it[pk] === selectedItemNo));
+  if (selectedItemNo) renderDetailEditable(items.find(it => it[pk] === selectedItemNo));
 });
 document.getElementById('selectNone').addEventListener('click', () => {
   headers.forEach(h => { attrChecked[h] = false; });
   renderAttrSections();
   const pk = getPrimaryKey();
-  if (selectedItemNo) renderDetail(items.find(it => it[pk] === selectedItemNo));
+  if (selectedItemNo) renderDetailEditable(items.find(it => it[pk] === selectedItemNo));
 });
 $editCurrentItem.addEventListener('click', () => {
   const pk = getPrimaryKey();
@@ -1145,6 +1222,7 @@ $editCurrentItem.addEventListener('click', () => {
 });
 $addNewItem.addEventListener('click', openNewItemModal);
 $saveFile.addEventListener('click', saveToFile);
+if ($saveDetail) $saveDetail.addEventListener('click', saveToFile);
 
 document.getElementById('modalClose').addEventListener('click', closeEditModal);
 document.getElementById('modalCancel').addEventListener('click', closeEditModal);
@@ -1153,11 +1231,15 @@ $editModal.addEventListener('click', e => { if (e.target === $editModal) closeEd
 
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && $editModal.style.display !== 'none') closeEditModal();
+  if (e.ctrlKey && e.key === 's') {
+    e.preventDefault();
+    if (!$saveFile.disabled) saveToFile();
+  }
 });
 
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 //  Tab switch
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 function hasUnsavedChanges() {
   return items.some(it => it._dirty || it._isNew);
 }
@@ -1166,7 +1248,7 @@ function switchTab(newTab) {
   if (newTab === activeTab) return;
 
   if (hasUnsavedChanges()) {
-    const name = activeTab === 'character' ? '怪物' : '物品';
+    const name = activeTab === 'character' ? '角色' : '物品';
     if (!confirm(name + '有未保存修改，确定要切换吗？')) return;
   }
 
@@ -1186,10 +1268,10 @@ function switchTab(newTab) {
   const pk = getPrimaryKey();
   if (selectedItemNo) {
     const item = items.find(it => it[pk] === selectedItemNo);
-    if (item) renderDetail(item);
+    if (item) renderDetailEditable(item);
     $editCurrentItem.disabled = false;
   } else {
-    $detailArea.innerHTML = '<div class="empty-state">' + (newTab === 'character' ? '请在左侧选择怪物' : '请在左侧选择物品') + '</div>';
+    $detailArea.innerHTML = '<div class="empty-state">' + (newTab === 'character' ? '请在左侧选择角色' : '请在左侧选择物品') + '</div>';
     $editCurrentItem.disabled = true;
   }
 
@@ -1197,9 +1279,9 @@ function switchTab(newTab) {
   updateUnsavedStatus();
 }
 
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 //  Init
-// ─────────────────────────────────────────
+// —————————————————————————————————————————
 async function loadFromServer() {
   const url = activeTab === 'character' ? 'CharacterInfo.txt' : 'ItemInfo.txt';
   const useGbk = activeTab === 'character';
@@ -1236,14 +1318,14 @@ function initLoader() {
     document.getElementById('loadFromServer').style.display = 'none';
     const btn = document.getElementById('tauriSelectFile');
     btn.style.display = '';
-    btn.textContent = '📂 选择文件';
+    btn.textContent = '馃搨 选择文件';
     btn.addEventListener('click', async () => {
       try {
         const cmd = activeTab === 'character' ? 'read_character_file' : 'read_item_file';
         const res = await window.__TAURI__.core.invoke(cmd);
         doLoadFile(res.content, res.path);
       } catch (e) {
-        alert('❌ 读取失败：' + e);
+        alert('Read failed: ' + e);
       }
     });
   } else {
